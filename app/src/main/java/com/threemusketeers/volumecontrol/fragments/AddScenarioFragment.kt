@@ -18,6 +18,14 @@ class AddScenarioFragment : Fragment() {
     ): View? {
         binding=DataBindingUtil.inflate(inflater, R.layout.fragment_add_scenario, container, false)
 
+        binding.tvCancel.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction().apply {
+
+                remove(AddScenarioFragment())
+                replace(R.id.layoutContainer, ScenarioFragment())
+            }.commit()
+        }
+
         return binding.root
     }
 

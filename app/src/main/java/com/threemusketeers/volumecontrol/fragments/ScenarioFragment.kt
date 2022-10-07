@@ -21,6 +21,17 @@ class ScenarioFragment : Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_scenario_list, container, false)
 
+        binding.btnAddScenario.setOnClickListener {
+            requireActivity().apply {
+//                actionBar?.
+                supportFragmentManager.beginTransaction().apply {
+
+                    remove(ScenarioFragment())
+                    replace(R.id.layoutContainer, AddScenarioFragment())
+                }.commit()
+            }
+        }
+
 
 
         return binding.root
