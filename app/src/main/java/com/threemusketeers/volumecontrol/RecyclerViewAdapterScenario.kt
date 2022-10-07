@@ -1,4 +1,4 @@
-package com.threemusketeers.volumecontrol.adapter
+package com.threemusketeers.volumecontrol
 
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
