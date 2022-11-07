@@ -16,7 +16,8 @@ class HomeActivity : AppCompatActivity() {
             setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.app_primary)))
             elevation=0.toFloat()
         }
-        supportFragmentManager.beginTransaction().add(R.id.layoutContainer, ScenarioFragment()).commit()
+        supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in,R.anim.slide_out,
+            R.anim.fade_in,R.anim.slide_out).add(R.id.layoutContainer, ScenarioFragment()).commit()
 
     }
 }

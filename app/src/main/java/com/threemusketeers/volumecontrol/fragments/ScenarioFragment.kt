@@ -28,6 +28,7 @@ class ScenarioFragment : Fragment() {
 
                     remove(ScenarioFragment())
                     replace(R.id.layoutContainer, AddScenarioFragment())
+                    setCustomAnimations(R.anim.slide_in,R.anim.slide_out)
                 }.commit()
             }
         }

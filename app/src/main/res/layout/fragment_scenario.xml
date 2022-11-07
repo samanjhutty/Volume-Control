@@ -12,6 +12,7 @@
     android:background="@drawable/shape"
     android:backgroundTint="@color/app_secondary">
     <LinearLayout
+        android:id="@+id/timeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -32,6 +33,19 @@
         android:layout_height="wrap_content"/>
     </LinearLayout>
 
+        <TextView
+            android:id="@+id/tvDaysofWeek"
+            android:text="@string/days_of_week"
+            android:textAlignment="textEnd"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/timeLayout"
+            app:layout_constraintEnd_toStartOf="@id/btnSwitch"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="16dp"
+            />
     <androidx.appcompat.widget.SwitchCompat
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
