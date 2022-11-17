@@ -4,31 +4,55 @@
     <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/list_item_layout"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="110dp"
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="8dp"
-    android:padding="16dp"
+    android:paddingLeft="16dp"
+        android:paddingRight="16dp"
     android:elevation="10dp"
     android:background="@drawable/shape"
     android:backgroundTint="@color/app_secondary">
+
+        <TextView
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/timeLayout"
+            android:layout_width="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"
+            android:text="@string/default_scenario_name"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/tvScenarioName"/>
     <LinearLayout
         android:id="@+id/timeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/tvScenarioName"
+        android:layout_marginTop="12dp"
         app:layout_constraintStart_toStartOf="parent">
+
     <TextView
+        android:layout_margin="4dp"
         android:id="@+id/tvStartTime"
+        android:textStyle="bold"
+        android:textSize="16sp"
         android:text="@string/start_time"
-        android:padding="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <TextView
-        android:id="@+id/tvEndTime"
-        android:text="@string/end_time"
-        android:padding="8dp"
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/time_splitter"
+            />
+        <TextView
+            android:layout_margin="4dp"
+            android:id="@+id/tvEndTime"
+            android:textSize="16sp"
+            android:textStyle="bold"
+        android:text="@string/start_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     </LinearLayout>
@@ -37,15 +61,15 @@
             android:id="@+id/tvDaysofWeek"
             android:text="@string/days_of_week"
             android:textAlignment="textEnd"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/timeLayout"
             app:layout_constraintEnd_toStartOf="@id/btnSwitch"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="16dp"
             />
+
     <androidx.appcompat.widget.SwitchCompat
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -7,28 +7,54 @@
     android:background="@drawable/home_bg"
     tools:context=".fragments.AddScenarioFragment">
     <TextView
-        android:layout_marginStart="24dp"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Start_time_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@id/tvStartTime"
+        app:layout_constraintStart_toStartOf="@id/tvStartTime"
+        app:layout_constraintEnd_toEndOf="@id/tvStartTime"
+        />
+    <TextView
+        android:textColor="@color/white"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/cvScenarioAttrib"
         app:layout_constraintEnd_toStartOf="@id/tvEndTime"
         android:id="@+id/tvStartTime"
-        android:layout_width="180dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/set_start_time"
-        android:textSize="32sp" />
+        android:text="@string/start_time"
+        android:textSize="56sp" />
     <TextView
+        android:textColor="@color/white"
+        android:layout_marginBottom="16dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/end_time_text"
+        app:layout_constraintBottom_toTopOf="@id/tvEndTime"
+        app:layout_constraintStart_toStartOf="@id/tvEndTime"
+        app:layout_constraintEnd_toEndOf="@id/tvEndTime"
+        />
+
+    <TextView
+        android:textColor="@color/white"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/tvStartTime"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/cvScenarioAttrib"
         android:id="@+id/tvEndTime"
-        android:layout_width="180dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/set_end_time"
-        android:textSize="32sp" />
+        android:text="@string/start_time"
+        android:textSize="56sp" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvScenarioAttrib"
@@ -43,25 +69,19 @@
             android:padding="32dp"
             android:layout_height="match_parent">
             <EditText
+                android:inputType="text"
                 android:id="@+id/etScenarioName"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/scenario_name" />
-
+                android:hint="@string/scenario_name"
+                android:autofillHints="Scenario 1" />
 
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
-
-
-
-
-
-
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         app:layout_constraintStart_toStartOf="parent"
