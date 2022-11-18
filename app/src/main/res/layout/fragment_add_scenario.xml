@@ -1,10 +1,14 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:fillViewport="true"
+        android:layout_height="match_parent">
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/home_bg"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_home"
     tools:context=".fragments.AddScenarioFragment">
 
     <TextView
@@ -12,9 +16,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/Start_time_text"
-        android:textSize="16sp"
+        android:textSize="@dimen/big_text"
         android:textStyle="bold"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/long_margin"
         app:layout_constraintBottom_toTopOf="@id/tvStartTime"
         app:layout_constraintStart_toStartOf="@id/tvStartTime"
         app:layout_constraintEnd_toEndOf="@id/tvStartTime"
@@ -30,12 +34,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/start_time"
-        android:textSize="56sp" />
+        android:textSize="@dimen/uuBig_text" />
 
     <TextView
         android:textColor="@color/white"
-        android:layout_marginBottom="16dp"
-        android:textSize="16sp"
+        android:layout_marginBottom="@dimen/long_margin"
+        android:textSize="@dimen/big_text"
         android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -55,30 +59,44 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/start_time"
-        android:textSize="56sp" />
+        android:textSize="@dimen/uuBig_text" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvScenarioAttrib"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="240dp"
+        android:layout_height="@dimen/no_margin"
+        android:layout_marginTop="@dimen/hhLong_margin"
         app:layout_constraintTop_toTopOf="parent"
-        app:cardCornerRadius="32dp"
+        app:cardCornerRadius="@dimen/uLong_margin"
         app:layout_constraintBottom_toTopOf="@id/bottomLayout">
-        <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:fillViewport="true"
+        android:layout_height="match_parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:padding="16dp"
+            android:padding="@dimen/long_margin"
             android:layout_height="match_parent">
             <TextView
-                android:layout_marginVertical="16dp"
-                android:id="@+id/tvGetDays"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:id="@+id/tvRepeatText"
+                android:text="@string/repeat"
+                android:textSize="@dimen/big_text"
+                android:textStyle="bold"/>
+            <TextView
+                android:layout_marginVertical="@dimen/short_margin"
+                android:id="@+id/tvGetDays"
+                android:layout_marginStart="@dimen/short_margin"
+                app:layout_constraintTop_toBottomOf="@id/tvRepeatText"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/never"/>
             <LinearLayout
-                android:layout_marginVertical="8dp"
+                android:layout_marginVertical="@dimen/short_margin"
                 android:id="@+id/layoutDay"
                 app:layout_constraintTop_toBottomOf="@id/tvGetDays"
                 app:layout_constraintStart_toStartOf="parent"
@@ -87,70 +105,104 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <TextView
-                    android:layout_margin="4dp"
+                    android:id="@+id/tvDayMon"
+                    android:layout_margin="@dimen/vShort_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/mon"
                     android:gravity="center"
-                    android:background="@drawable/day_bg"/>
+                    android:background="@drawable/bg_day"/>
                 <TextView
-                    android:layout_margin="4dp"
+                    android:id="@+id/tvDayTue"
+                    android:layout_margin="@dimen/vShort_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/tue"
                     android:gravity="center"
-                    android:background="@drawable/day_bg"/>
+                    android:background="@drawable/bg_day"/>
                 <TextView
-                    android:layout_margin="4dp"
+                    android:id="@+id/tvDayWed"
+                    android:layout_margin="@dimen/vShort_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/wed"
                     android:gravity="center"
-                    android:background="@drawable/day_bg"/>
+                    android:background="@drawable/bg_day"/>
                 <TextView
-                    android:layout_margin="4dp"
+                    android:id="@+id/tvDayThu"
+                    android:layout_margin="@dimen/vShort_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/thu"
                     android:gravity="center"
-                    android:background="@drawable/day_bg"/>
+                    android:background="@drawable/bg_day"/>
                 <TextView
-                    android:layout_margin="4dp"
+                    android:id="@+id/tvDayFri"
+                    android:layout_margin="@dimen/vShort_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/fri"
                     android:gravity="center"
-                    android:background="@drawable/day_bg"/>
+                    android:background="@drawable/bg_day"/>
                 <TextView
-                    android:layout_margin="4dp"
+                    android:id="@+id/tvDaySat"
+                    android:layout_margin="@dimen/vShort_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sat"
                     android:gravity="center"
-                    android:background="@drawable/day_bg"/>
+                    android:background="@drawable/bg_day"/>
                 <TextView
-                    android:layout_margin="4dp"
+                    android:id="@+id/tvDaySun"
+                    android:layout_margin="@dimen/vShort_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sun"
                     android:gravity="center"
-                    android:background="@drawable/day_bg"/>
+                    android:background="@drawable/bg_day"/>
             </LinearLayout>
+
             <com.google.android.material.textfield.TextInputEditText
+                android:padding="@dimen/short_margin"
                 android:inputType="text"
-                android:layout_marginVertical="16dp"
+                android:layout_marginVertical="@dimen/long_margin"
                 android:id="@+id/etScenarioName"
+                android:textColor="@color/text_color"
+                android:background="@drawable/bg_name_textview"
                 app:layout_constraintTop_toBottomOf="@id/layoutDay"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/uxLong_margin"
                 android:hint="@string/scenario_name"
                 android:autofillHints="Scenario 1" />
+            <RelativeLayout
+                app:layout_constraintTop_toBottomOf="@id/etScenarioName"
+                android:layout_marginTop="@dimen/vLong_margin"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="@dimen/uxLong_margin">
+                <TextView
+                    android:layout_width="@dimen/uxLong_margin"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mode"
+                    android:layout_alignParentStart="true"
+                    android:textSize="@dimen/big_text"
+                    android:textStyle="bold"
+                    />
+                <Spinner
+                    android:id="@+id/spinnerMode"
+                    android:layout_alignParentEnd="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:spinnerMode="dropdown"/>
+
+            </RelativeLayout>
 
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
     </androidx.cardview.widget.CardView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -159,31 +211,31 @@
         android:id="@+id/bottomLayout"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="@dimen/hLong_margin"
         android:gravity="center">
         <TextView
-            android:textSize="16sp"
+            android:textSize="@dimen/big_text"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/ivSave"
             android:gravity="center"
             android:id="@+id/tvCancel"
             android:text="@string/cancel"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="@dimen/long_margin"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
 
         <TextView
-            android:textSize="16sp"
+            android:textSize="@dimen/big_text"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/tvCancel"
             android:gravity="center"
             android:id="@+id/ivSave"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="@dimen/long_margin"
             android:text="@string/save"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout></layout>
+</androidx.constraintlayout.widget.ConstraintLayout></ScrollView></layout>

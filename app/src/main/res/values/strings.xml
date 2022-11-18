@@ -20,5 +20,7 @@
     <string name="sun">Sun</string>
 
     <string name="never">Never</string>
+    <string name="repeat">Repeat</string>
+    <string name="mode">Mode</string>
 
 </resources>

@@ -5,21 +5,21 @@
     android:id="@+id/list_item_layout"
     android:layout_width="match_parent"
     android:layout_height="110dp"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
-    android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-    android:elevation="10dp"
-    android:background="@drawable/shape"
+    android:layout_marginHorizontal="@dimen/long_margin"
+    android:layout_marginVertical="@dimen/short_margin"
+    android:paddingLeft="@dimen/long_margin"
+        android:paddingRight="@dimen/long_margin"
+    android:elevation="@dimen/short_margin"
+    android:background="@drawable/bg_scenario_card"
     android:backgroundTint="@color/app_secondary">
 
         <TextView
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/timeLayout"
             android:layout_width="wrap_content"
-            android:textSize="18sp"
+            android:textSize="@dimen/vBig_text"
             android:textStyle="bold"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/vLong_margin"
             android:text="@string/default_scenario_name"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,10 +34,10 @@
         app:layout_constraintStart_toStartOf="parent">
 
     <TextView
-        android:layout_margin="4dp"
+        android:layout_margin="@dimen/vShort_margin"
         android:id="@+id/tvStartTime"
         android:textStyle="bold"
-        android:textSize="16sp"
+        android:textSize="@dimen/big_text"
         android:text="@string/start_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -45,12 +45,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/time_splitter"
+            android:src="@drawable/icon_time_splitter"
             />
         <TextView
-            android:layout_margin="4dp"
+            android:layout_margin="@dimen/vShort_margin"
             android:id="@+id/tvEndTime"
-            android:textSize="16sp"
+            android:textSize="@dimen/big_text"
             android:textStyle="bold"
         android:text="@string/start_time"
         android:layout_width="wrap_content"
@@ -66,15 +66,15 @@
             app:layout_constraintEnd_toStartOf="@id/btnSwitch"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="@dimen/vvLong_margin"
+            android:layout_marginEnd="@dimen/long_margin"
             />
 
     <androidx.appcompat.widget.SwitchCompat
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btnSwitch"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="@dimen/short_margin"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

@@ -8,11 +8,11 @@
     android:layout_width="match_parent">
 <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/list"
-    android:background="@drawable/home_bg"
+    android:background="@drawable/bg_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:name="com.threemusketeers.volumecontrol.scenarioFragment"
-    android:paddingTop="8dp"
+    android:paddingTop="@dimen/short_margin"
     app:layoutManager="LinearLayoutManager"
     tools:listitem="@layout/fragment_scenario" />
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -20,11 +20,11 @@
     android:layout_height="wrap_content"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintBottom_toBottomOf="parent"
-    android:layout_marginEnd="16dp"
+    android:layout_marginEnd="@dimen/long_margin"
     android:id="@+id/btnAddScenario"
-    android:src="@drawable/add_icon"
+    android:src="@drawable/icon_add_scenario"
     android:backgroundTint="@color/app_primary"
-    app:borderWidth="0dp"
-    android:layout_marginBottom="16dp"
+    app:borderWidth="@dimen/no_margin"
+    android:layout_marginBottom="@dimen/long_margin"
     android:contentDescription="@string/add_scenario" />
 </androidx.constraintlayout.widget.ConstraintLayout></layout>

@@ -9,9 +9,6 @@ import androidx.databinding.DataBindingUtil
 import com.threemusketeers.volumecontrol.R
 import com.threemusketeers.volumecontrol.databinding.FragmentScenarioListBinding
 
-/**
- * A fragment representing a list of Items.
- */
 class ScenarioFragment : Fragment() {
     private lateinit var binding:FragmentScenarioListBinding
 
@@ -23,17 +20,17 @@ class ScenarioFragment : Fragment() {
 
         binding.btnAddScenario.setOnClickListener {
             requireActivity().apply {
-//                actionBar?.
                 supportFragmentManager.beginTransaction().apply {
 
                     remove(ScenarioFragment())
+                    setCustomAnimations(R.anim.slide_in,
+                        R.anim.fade_out,
+                        R.anim.fade_in,
+                        R.anim.slide_out)
                     replace(R.id.layoutContainer, AddScenarioFragment())
-                    setCustomAnimations(R.anim.slide_in,R.anim.slide_out)
                 }.commit()
             }
         }
-
-
 
         return binding.root
     }
