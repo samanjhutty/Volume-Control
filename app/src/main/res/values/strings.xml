@@ -11,4 +11,14 @@
     <string name="days_of_week">Days of week</string>
     <string name="default_scenario_name">Scenario 1</string>
 
+    <string name="mon">Mon</string>
+    <string name="tue">Tue</string>
+    <string name="wed">Wed</string>
+    <string name="thu">Thu</string>
+    <string name="fri">Fri</string>
+    <string name="sat">Sat</string>
+    <string name="sun">Sun</string>
+
+    <string name="never">Never</string>
+
 </resources>

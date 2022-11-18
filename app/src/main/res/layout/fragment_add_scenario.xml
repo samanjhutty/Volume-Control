@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/home_bg"
     tools:context=".fragments.AddScenarioFragment">
+
     <TextView
         android:textColor="@color/white"
         android:layout_width="wrap_content"
@@ -30,6 +31,7 @@
         android:layout_height="wrap_content"
         android:text="@string/start_time"
         android:textSize="56sp" />
+
     <TextView
         android:textColor="@color/white"
         android:layout_marginBottom="16dp"
@@ -42,7 +44,6 @@
         app:layout_constraintStart_toStartOf="@id/tvEndTime"
         app:layout_constraintEnd_toEndOf="@id/tvEndTime"
         />
-
     <TextView
         android:textColor="@color/white"
         android:textStyle="bold"
@@ -66,13 +67,82 @@
         app:layout_constraintBottom_toTopOf="@id/bottomLayout">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:padding="32dp"
+            android:padding="16dp"
             android:layout_height="match_parent">
-            <EditText
-                android:inputType="text"
-                android:id="@+id/etScenarioName"
+            <TextView
+                android:layout_marginVertical="16dp"
+                android:id="@+id/tvGetDays"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/never"/>
+            <LinearLayout
+                android:layout_marginVertical="8dp"
+                android:id="@+id/layoutDay"
+                app:layout_constraintTop_toBottomOf="@id/tvGetDays"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_margin="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mon"
+                    android:gravity="center"
+                    android:background="@drawable/day_bg"/>
+                <TextView
+                    android:layout_margin="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tue"
+                    android:gravity="center"
+                    android:background="@drawable/day_bg"/>
+                <TextView
+                    android:layout_margin="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/wed"
+                    android:gravity="center"
+                    android:background="@drawable/day_bg"/>
+                <TextView
+                    android:layout_margin="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/thu"
+                    android:gravity="center"
+                    android:background="@drawable/day_bg"/>
+                <TextView
+                    android:layout_margin="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fri"
+                    android:gravity="center"
+                    android:background="@drawable/day_bg"/>
+                <TextView
+                    android:layout_margin="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sat"
+                    android:gravity="center"
+                    android:background="@drawable/day_bg"/>
+                <TextView
+                    android:layout_margin="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sun"
+                    android:gravity="center"
+                    android:background="@drawable/day_bg"/>
+            </LinearLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:inputType="text"
+                android:layout_marginVertical="16dp"
+                android:id="@+id/etScenarioName"
+                app:layout_constraintTop_toBottomOf="@id/layoutDay"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/scenario_name"
