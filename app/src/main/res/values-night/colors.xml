@@ -10,6 +10,7 @@
     <color name="app_primary">#8360c3</color>
     <color name="app_secondary">#3d3b3b</color>
     <color name="app_secondary_light">#6e6a6a</color>
-
+    <color name="white_light">#d9d8d4</color>
+    <color name="text_color">#d9d8d4</color>
 
 </resources>

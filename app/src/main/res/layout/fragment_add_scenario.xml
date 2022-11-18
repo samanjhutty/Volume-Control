@@ -77,11 +77,16 @@
             android:layout_width="match_parent"
             android:padding="@dimen/long_margin"
             android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/layoutRepeat_nDays"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/etScenarioName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 android:id="@+id/tvRepeatText"
                 android:text="@string/repeat"
                 android:textSize="@dimen/big_text"
@@ -90,14 +95,12 @@
                 android:layout_marginVertical="@dimen/short_margin"
                 android:id="@+id/tvGetDays"
                 android:layout_marginStart="@dimen/short_margin"
-                app:layout_constraintTop_toBottomOf="@id/tvRepeatText"
-                app:layout_constraintStart_toStartOf="parent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/never"/>
+
             <LinearLayout
-                android:layout_marginVertical="@dimen/short_margin"
-                android:id="@+id/layoutDay"
+                android:id="@+id/layoutDays"
                 app:layout_constraintTop_toBottomOf="@id/tvGetDays"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -161,24 +164,30 @@
                     android:gravity="center"
                     android:background="@drawable/bg_day"/>
             </LinearLayout>
+        </LinearLayout>
 
             <com.google.android.material.textfield.TextInputEditText
                 android:padding="@dimen/short_margin"
                 android:inputType="text"
-                android:layout_marginVertical="@dimen/long_margin"
                 android:id="@+id/etScenarioName"
                 android:textColor="@color/text_color"
                 android:background="@drawable/bg_name_textview"
-                app:layout_constraintTop_toBottomOf="@id/layoutDay"
+                app:layout_constraintTop_toBottomOf="@id/layoutRepeat_nDays"
+                app:layout_constraintBottom_toTopOf="@id/layoutMode"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/uxLong_margin"
                 android:hint="@string/scenario_name"
                 android:autofillHints="Scenario 1" />
+
             <RelativeLayout
+                android:id="@+id/layoutMode"
+                android:padding="@dimen/short_margin"
+                android:background="@drawable/bg_name_textview"
                 app:layout_constraintTop_toBottomOf="@id/etScenarioName"
-                android:layout_marginTop="@dimen/vLong_margin"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/layoutMediaVolume"
                 android:layout_width="match_parent"
                 android:gravity="center"
                 android:layout_height="@dimen/uxLong_margin">
@@ -196,10 +205,31 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:spinnerMode="dropdown"/>
-
             </RelativeLayout>
 
-
+        <LinearLayout
+            android:id="@+id/layoutMediaVolume"
+            app:layout_constraintTop_toBottomOf="@id/layoutMode"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <TextView
+            android:id="@+id/tvVolumeText"
+            android:layout_marginTop="@dimen/short_margin"
+            android:layout_width="wrap_content"
+            android:textStyle="bold"
+            android:textSize="@dimen/big_text"
+            android:layout_height="wrap_content"
+            android:text="@string/media_volume"/>
+        <SeekBar
+            android:id="@+id/sbMediaVolume"
+            android:layout_marginVertical="@dimen/long_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

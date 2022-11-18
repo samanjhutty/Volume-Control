@@ -9,7 +9,7 @@
     <dimen name="uLong_margin">32dp</dimen>
     <dimen name="uxLong_margin">46dp</dimen>
     <dimen name="hLong_margin">64dp</dimen>
-    <dimen name="hhLong_margin">240dp</dimen>
+    <dimen name="hhLong_margin">280dp</dimen>
 
     <dimen name="small_text">8sp</dimen>
     <dimen name="big_text">16sp</dimen>

@@ -22,5 +22,6 @@
     <string name="never">Never</string>
     <string name="repeat">Repeat</string>
     <string name="mode">Mode</string>
+    <string name="media_volume">Media Volume</string>
 
 </resources>
