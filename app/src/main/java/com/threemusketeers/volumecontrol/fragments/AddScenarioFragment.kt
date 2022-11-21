@@ -1,20 +1,22 @@
 package com.threemusketeers.volumecontrol.fragments
 
 import android.app.TimePickerDialog
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.threemusketeers.volumecontrol.R
 import com.threemusketeers.volumecontrol.databinding.FragmentAddScenarioBinding
 import java.util.*
-
 
 class AddScenarioFragment : Fragment() {
     private lateinit var binding:FragmentAddScenarioBinding
@@ -24,7 +26,7 @@ class AddScenarioFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_scenario, container, false)
 
         binding.tvCancel.setOnClickListener {
@@ -41,72 +43,42 @@ class AddScenarioFragment : Fragment() {
         val calender = Calendar.getInstance()
         val hour = calender.get(Calendar.HOUR_OF_DAY)
         val minute = calender.get(Calendar.MINUTE)
-
         binding.tvStartTime.setOnClickListener {
             val timePickerDialog = TimePickerDialog(
                 requireContext(),
-                { view, hourOfDay, minute ->
+                { _, hourOfDay, minute ->
 
-                    binding.tvStartTime.text = "$hourOfDay:$minute"
+                    binding.tvStartTime.text = getString(R.string.hours_minutes,hourOfDay,minute)
                 }, hour, minute, true)
             timePickerDialog.show()
         }
         binding.tvEndTime.setOnClickListener {
             val timePickerDialog = TimePickerDialog(
                 requireContext(),
-                { view, hourOfDay, minute ->
+                { _, hourOfDay, minute ->
 
-                    binding.tvEndTime.text = "$hourOfDay:$minute"
+                    binding.tvEndTime.text = getString(R.string.hours_minutes,hourOfDay,minute)
                 }, hour, minute, true)
             timePickerDialog.show()
         }
 
 
-//        daysBg(binding.tvDayMon)
-//        daysBg(binding.tvDayTue)
-//        daysBg(binding.tvDayWed)
-//        daysBg(binding.tvDayThu)
-//        daysBg(binding.tvDayFri)
-//        daysBg(binding.tvDaySat)
-//        daysBg(binding.tvDaySun)
+        val soundMode=resources.getStringArray(R.array.sound_mode)
+        binding.spinnerMode.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, soundMode)
+        binding.spinnerMode.onItemSelectedListener =object :
+            AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View, position: Int, id: Long
+                ) {
+                    Toast.makeText(requireContext(), soundMode[position], Toast.LENGTH_SHORT).show()
+                }
 
+                override fun onNothingSelected(parent: AdapterView<*>) {
+                    // write code to perform some action
+                }
+            }
 
         return binding.root
-    }
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun daysBg(day_id:TextView) {
-
-        day_id.setOnClickListener {
-            val buttonColor = day_id.background as ColorDrawable
-            val color = buttonColor.color
-            if (color == resources.getColor(android.R.color.transparent)) {
-                day_id.setBackgroundTintList(resources.getColorStateList(R.color.app_primary));
-                day_id.setTextColor(resources.getColor(R.color.white_light))
-                arraylist.add(day_id.text.toString())
-                for (i in arraylist)
-                    binding.tvGetDays.text = "$i "
-                for (i in arraylist)
-                when (i.length) {
-                        0 -> binding.tvGetDays.text = resources.getString(R.string.never)
-                        1 -> binding.tvGetDays.text = i
-                        else -> binding.tvGetDays.text = "$i "
-                    }
-            }
-
-            else if(color == resources.getColor(R.color.app_primary)){
-                day_id.setBackgroundTintList(resources.getColorStateList(android.R.color.transparent));
-                day_id.setTextColor(resources.getColor(R.color.text_color))
-                arraylist.remove(day_id.text.toString())
-                for (i in arraylist)
-                    when (i.length) {
-                        0 -> binding.tvGetDays.text = resources.getString(R.string.never)
-                        1 -> binding.tvGetDays.text = i
-                        else -> binding.tvGetDays.text = "$i "
-                    }
-            }
-
-        }
-//        for (i in arraylist)
-//        return i
     }
 }

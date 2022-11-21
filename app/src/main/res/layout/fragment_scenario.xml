@@ -10,7 +10,7 @@
     android:paddingLeft="@dimen/long_margin"
         android:paddingRight="@dimen/long_margin"
     android:elevation="@dimen/short_margin"
-    android:background="@drawable/bg_scenario_card"
+    android:background="@drawable/bg_scenario_item"
     android:backgroundTint="@color/app_secondary">
 
         <TextView

@@ -3,7 +3,7 @@ package com.threemusketeers.volumecontrol
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.core.content.res.ResourcesCompat
 import com.threemusketeers.volumecontrol.fragments.ScenarioFragment
 
 class HomeActivity : AppCompatActivity() {
@@ -12,8 +12,8 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
         supportActionBar?.apply {
-            title="Volume Control"
-            setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.app_primary)))
+            title=resources.getString(R.string.app_name)
+            setBackgroundDrawable(ColorDrawable(ResourcesCompat.getColor(resources,R.color.app_primary,null)))
             elevation=0.toFloat()
         }
         supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in,R.anim.slide_out,

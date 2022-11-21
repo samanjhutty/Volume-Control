@@ -110,66 +110,67 @@
                 <TextView
                     android:id="@+id/tvDayMon"
                     android:layout_margin="@dimen/vShort_margin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/uxLong_margin"
+                    android:layout_height="@dimen/uxLong_margin"
                     android:text="@string/mon"
-                    android:gravity="center"
-                    android:background="@drawable/bg_day"/>
+                    android:background="@drawable/bg_day_shape_oval"
+                    android:gravity="center" />
                 <TextView
                     android:id="@+id/tvDayTue"
                     android:layout_margin="@dimen/vShort_margin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/uxLong_margin"
+                    android:background="@drawable/bg_day_shape_oval"
+                    android:layout_height="@dimen/uxLong_margin"
                     android:text="@string/tue"
-                    android:gravity="center"
-                    android:background="@drawable/bg_day"/>
+                    android:gravity="center" />
                 <TextView
                     android:id="@+id/tvDayWed"
                     android:layout_margin="@dimen/vShort_margin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/uxLong_margin"
+                    android:layout_height="@dimen/uxLong_margin"
                     android:text="@string/wed"
                     android:gravity="center"
-                    android:background="@drawable/bg_day"/>
+                    android:background="@drawable/bg_day_shape_oval"/>
                 <TextView
                     android:id="@+id/tvDayThu"
                     android:layout_margin="@dimen/vShort_margin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/uxLong_margin"
+                    android:layout_height="@dimen/uxLong_margin"
                     android:text="@string/thu"
                     android:gravity="center"
-                    android:background="@drawable/bg_day"/>
+                    android:background="@drawable/bg_day_shape_oval"/>
                 <TextView
                     android:id="@+id/tvDayFri"
                     android:layout_margin="@dimen/vShort_margin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/uxLong_margin"
+                    android:layout_height="@dimen/uxLong_margin"
                     android:text="@string/fri"
                     android:gravity="center"
-                    android:background="@drawable/bg_day"/>
+                    android:background="@drawable/bg_day_shape_oval"/>
                 <TextView
                     android:id="@+id/tvDaySat"
                     android:layout_margin="@dimen/vShort_margin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/uxLong_margin"
+                    android:layout_height="@dimen/uxLong_margin"
                     android:text="@string/sat"
                     android:gravity="center"
-                    android:background="@drawable/bg_day"/>
+                    android:background="@drawable/bg_day_shape_oval"/>
                 <TextView
                     android:id="@+id/tvDaySun"
                     android:layout_margin="@dimen/vShort_margin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/uxLong_margin"
+                    android:layout_height="@dimen/uxLong_margin"
                     android:text="@string/sun"
                     android:gravity="center"
-                    android:background="@drawable/bg_day"/>
+                    android:background="@drawable/bg_day_shape_oval"/>
             </LinearLayout>
         </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
+            <EditText
                 android:padding="@dimen/short_margin"
                 android:inputType="text"
                 android:id="@+id/etScenarioName"
+                android:layout_marginTop="@dimen/short_margin"
                 android:textColor="@color/text_color"
                 android:background="@drawable/bg_name_textview"
                 app:layout_constraintTop_toBottomOf="@id/layoutRepeat_nDays"
@@ -184,6 +185,7 @@
             <RelativeLayout
                 android:id="@+id/layoutMode"
                 android:padding="@dimen/short_margin"
+                android:layout_marginTop="@dimen/short_margin"
                 android:background="@drawable/bg_name_textview"
                 app:layout_constraintTop_toBottomOf="@id/etScenarioName"
                 app:layout_constraintStart_toStartOf="parent"
@@ -193,21 +195,25 @@
                 android:layout_height="@dimen/uxLong_margin">
                 <TextView
                     android:layout_width="@dimen/uxLong_margin"
-                    android:layout_height="wrap_content"
-                    android:text="@string/mode"
+                    android:layout_height="match_parent"
+                    android:text="@string/mode_text"
+                    android:gravity="center"
                     android:layout_alignParentStart="true"
                     android:textSize="@dimen/big_text"
-                    android:textStyle="bold"
-                    />
+                    android:textStyle="bold" />
                 <Spinner
                     android:id="@+id/spinnerMode"
+                    android:gravity="center"
+                    android:layout_marginEnd="@dimen/short_margin"
                     android:layout_alignParentEnd="true"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:dropDownWidth="@dimen/hxLong_margin"
+                    android:layout_height="match_parent"
                     android:spinnerMode="dropdown"/>
             </RelativeLayout>
 
         <LinearLayout
+            android:layout_marginTop="@dimen/short_margin"
             android:id="@+id/layoutMediaVolume"
             app:layout_constraintTop_toBottomOf="@id/layoutMode"
             app:layout_constraintStart_toStartOf="parent"
@@ -230,7 +236,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         </LinearLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
     </androidx.cardview.widget.CardView>
