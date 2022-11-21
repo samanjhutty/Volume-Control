@@ -62,6 +62,13 @@ class AddScenarioFragment : Fragment() {
             timePickerDialog.show()
         }
 
+        daysBg(binding.tvDayMon)
+        daysBg(binding.tvDayTue)
+        daysBg(binding.tvDayWed)
+        daysBg(binding.tvDayThu)
+        daysBg(binding.tvDayFri)
+        daysBg(binding.tvDaySat)
+        daysBg(binding.tvDaySun)
 
         val soundMode=resources.getStringArray(R.array.sound_mode)
         binding.spinnerMode.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, soundMode)
@@ -80,5 +87,44 @@ class AddScenarioFragment : Fragment() {
             }
 
         return binding.root
+    }
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun daysBg(day_id:TextView) {
+
+        val dayUnselected=ResourcesCompat.getDrawable(resources, R.drawable.bg_day_unselected, null)
+        val daySelected=ResourcesCompat.getDrawable(resources, R.drawable.bg_day_selected, null)
+
+        day_id.setOnClickListener {
+
+            when (day_id.background) {
+                daySelected -> {
+                    day_id.background = dayUnselected
+                    day_id.setTextColor(ResourcesCompat.getColor(resources,R.color.text_color,null))
+                    arraylist.remove(day_id.text)
+                    for (i in arraylist)
+                        when (i.length) {
+                            0 -> binding.tvGetDays.text = resources.getString(R.string.never)
+                            1 -> binding.tvGetDays.text = i
+                            else -> binding.tvGetDays.text =
+                                getString(R.string.array_list_with_space_string, i)
+                        }
+                }
+                dayUnselected -> {
+                    day_id.background = daySelected
+                    day_id.setTextColor(ResourcesCompat.getColor(resources,R.color.white_light,null))
+                    arraylist.add(day_id.text as String)
+                    for (i in arraylist)
+                        when (i.length) {
+                            0 -> binding.tvGetDays.text = resources.getString(R.string.never)
+                            1 -> binding.tvGetDays.text = i
+                            else -> binding.tvGetDays.text =
+                                getString(R.string.array_list_with_space_string,i)
+                        }
+                }
+                else -> {
+                    Toast.makeText(requireContext(), "Click not Working", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 }
