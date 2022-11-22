@@ -101,30 +101,23 @@ class AddScenarioFragment : Fragment() {
                     day_id.background = dayUnselected
                     day_id.setTextColor(ResourcesCompat.getColor(resources,R.color.text_color,null))
                     arraylist.remove(day_id.text)
-                    for (i in arraylist)
-                        when (i.length) {
-                            0 -> binding.tvGetDays.text = resources.getString(R.string.never)
-                            1 -> binding.tvGetDays.text = i
-                            else -> binding.tvGetDays.text =
-                                getString(R.string.array_list_with_space_string, i)
-                        }
                 }
                 dayUnselected -> {
                     day_id.background = daySelected
                     day_id.setTextColor(ResourcesCompat.getColor(resources,R.color.white_light,null))
                     arraylist.add(day_id.text as String)
-                    for (i in arraylist)
-                        when (i.length) {
-                            0 -> binding.tvGetDays.text = resources.getString(R.string.never)
-                            1 -> binding.tvGetDays.text = i
-                            else -> binding.tvGetDays.text =
-                                getString(R.string.array_list_with_space_string,i)
-                        }
                 }
                 else -> {
                     Toast.makeText(requireContext(), "Click not Working", Toast.LENGTH_SHORT).show()
                 }
             }
+            for (i in arraylist)
+                when (i.length) {
+                    0 -> binding.tvGetDays.text = resources.getString(R.string.never)
+                    1 -> binding.tvGetDays.text = i
+                    else -> binding.tvGetDays.text = getString(R.string.array_list_with_space_string,i)
+                }
+
         }
     }
 }
