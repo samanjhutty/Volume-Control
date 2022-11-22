@@ -1,6 +1,7 @@
 package com.threemusketeers.volumecontrol.fragments
 
 import android.app.TimePickerDialog
+import android.graphics.drawable.StateListDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -91,23 +92,21 @@ class AddScenarioFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.M)
     private fun daysBg(day_id:TextView) {
 
-        val dayUnselected=ResourcesCompat.getDrawable(resources, R.drawable.bg_day_unselected, null)
-        val daySelected=ResourcesCompat.getDrawable(resources, R.drawable.bg_day_selected, null)
-
         day_id.setOnClickListener {
+            if (day_id.isSelected) {
+                day_id.setTextColor(ResourcesCompat.getColor(resources, R.color.text_color, null))
+                arraylist.remove(day_id.text)
+                Toast.makeText(requireContext(), "selected clicked", Toast.LENGTH_SHORT).show()
+            }
+            else if (!day_id.isSelected){
+                day_id.setTextColor(ResourcesCompat.getColor(resources, R.color.white_light, null))
+                arraylist.add(day_id.text.toString())
+                Toast.makeText(requireContext(), "unselected clicked", Toast.LENGTH_SHORT).show()
+//                 val statelistdrawble=StateListDrawable()
+//                statelistdrawble.state = R.attr.state
 
-            when (day_id.background) {
-                daySelected -> {
-                    day_id.background = dayUnselected
-                    day_id.setTextColor(ResourcesCompat.getColor(resources,R.color.text_color,null))
-                    arraylist.remove(day_id.text)
-                }
-                dayUnselected -> {
-                    day_id.background = daySelected
-                    day_id.setTextColor(ResourcesCompat.getColor(resources,R.color.white_light,null))
-                    arraylist.add(day_id.text as String)
-                }
-                else -> {
+            }
+                else{
                     Toast.makeText(requireContext(), "Click not Working", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -118,6 +117,5 @@ class AddScenarioFragment : Fragment() {
                     else -> binding.tvGetDays.text = getString(R.string.array_list_with_space_string,i)
                 }
 
-        }
     }
 }

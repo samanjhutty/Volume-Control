@@ -23,10 +23,10 @@ class ScenarioFragment : Fragment() {
                 supportFragmentManager.beginTransaction().apply {
 
                     remove(ScenarioFragment())
-                    setCustomAnimations(R.anim.slide_in,
-                        R.anim.fade_out,
+                    setCustomAnimations(R.anim.slide_out,
                         R.anim.fade_in,
-                        R.anim.slide_out)
+                        R.anim.fade_out,
+                        R.anim.slide_in)
                     replace(R.id.layoutContainer, AddScenarioFragment())
                 }.commit()
             }
