@@ -4,6 +4,6 @@ import 'package:volume_control/controller/dbcontroller.dart';
 class InitBindings extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => DBcontroller());
+    Get.lazyPut<DBcontroller>(() => DBcontroller());
   }
 }

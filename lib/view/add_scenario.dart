@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:volume_control/assets/dimens.dart';
 import 'package:volume_control/controller/dbcontroller.dart';
-import '../model/days_model.dart';
+import 'package:volume_control/model/util/app_constants.dart';
+import '../model/models/days_model.dart';
+import '../model/util/dimens.dart';
 
 class AddScenario extends StatefulWidget {
   const AddScenario({super.key});
@@ -19,7 +20,7 @@ class _ScenarioState extends State<AddScenario> {
   late List<bool> daySelected;
   late List<Widget> days;
   List<String> repeatDays = [];
-  String volumeMode = 'Normal';
+  String volumeMode = AppConstants.volNormal;
   double volume = 0;
 
   @override
@@ -32,7 +33,8 @@ class _ScenarioState extends State<AddScenario> {
   @override
   Widget build(BuildContext context) {
     ColorScheme scheme = Theme.of(context).colorScheme;
-    return Material(
+    return ColoredBox(
+      color: scheme.primary,
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
@@ -52,7 +54,7 @@ class _ScenarioState extends State<AddScenario> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Start Time',
+                                AppConstants.startTime,
                                 style: TextStyle(color: scheme.onPrimary),
                               ),
                               InkWell(
@@ -64,7 +66,7 @@ class _ScenarioState extends State<AddScenario> {
                                 child: Text(startTime.format(context),
                                     style: TextStyle(
                                         color: scheme.onPrimary,
-                                        fontSize: Dimens.fontxLarge,
+                                        fontSize: Dimens.fontSuperLarge,
                                         fontWeight: FontWeight.bold)),
                               )
                             ]),
@@ -72,7 +74,7 @@ class _ScenarioState extends State<AddScenario> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'End Time',
+                                AppConstants.endTime,
                                 style: TextStyle(color: scheme.onPrimary),
                               ),
                               InkWell(
@@ -92,7 +94,7 @@ class _ScenarioState extends State<AddScenario> {
                                 child: Text(endTime.format(context),
                                     style: TextStyle(
                                         color: scheme.onPrimary,
-                                        fontSize: Dimens.fontxLarge,
+                                        fontSize: Dimens.fontSuperLarge,
                                         fontWeight: FontWeight.bold)),
                               )
                             ]),
@@ -105,12 +107,12 @@ class _ScenarioState extends State<AddScenario> {
                       decoration: BoxDecoration(
                           color: scheme.surface,
                           borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(Dimens.borderRadius))),
+                              top: Radius.circular(Dimens.borderRadiusLarge))),
                       child: ListView(
-                          padding: const EdgeInsets.all(Dimens.xMargin),
+                          padding: const EdgeInsets.all(Dimens.marginMedium),
                           children: [
                             const Text(
-                              'Repeat',
+                              AppConstants.repeat,
                               style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: Dimens.fontLarge),
@@ -119,22 +121,22 @@ class _ScenarioState extends State<AddScenario> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.all(Dimens.margin),
+                                  padding: const EdgeInsets.all(
+                                      Dimens.marginDefault),
                                   child: repeatDays.isEmpty
                                       ? const Text(
-                                          'Never',
+                                          AppConstants.dayNever,
                                         )
-                                      : repeatDays.length == 7
-                                          ? const Text('Everyday')
+                                      : repeatDays.length == Dimens.everyday
+                                          ? const Text(AppConstants.everyday)
                                           : Text((repeatDays
                                                   .toString()
                                                   .replaceAll('[', ''))
-                                              .toString()
                                               .replaceAll(']', '')),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
-                                    vertical: 8,
+                                    vertical: Dimens.paddingDefault,
                                   ),
                                   child: Center(
                                     child: SingleChildScrollView(
@@ -143,8 +145,8 @@ class _ScenarioState extends State<AddScenario> {
                                           fillColor: scheme.primary,
                                           selectedColor: scheme.onPrimary,
                                           renderBorder: false,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(
+                                              Dimens.borderRadiusDefault),
                                           onPressed: (index) {
                                             setState(() {
                                               daySelected[index] =
@@ -164,25 +166,27 @@ class _ScenarioState extends State<AddScenario> {
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                vertical: 16,
+                                vertical: Dimens.paddingMedium,
                               ),
                               child: TextFormField(
                                 controller: titleController,
                                 decoration: const InputDecoration(
-                                  labelText: 'Scenario Name',
+                                  labelText: AppConstants.sceName,
                                   border: OutlineInputBorder(),
                                 ),
                               ),
                             ),
                             const Padding(
-                              padding: EdgeInsets.only(top: 8),
-                              child: Text('Mode',
+                              padding:
+                                  EdgeInsets.only(top: Dimens.paddingDefault),
+                              child: Text(AppConstants.volMode,
                                   style: TextStyle(
                                       fontSize: Dimens.fontLarge,
                                       fontWeight: FontWeight.w600)),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: Dimens.paddingMedium),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
@@ -193,33 +197,34 @@ class _ScenarioState extends State<AddScenario> {
                                               const MaterialStatePropertyAll(
                                                   EdgeInsets.symmetric(
                                                       horizontal:
-                                                          Dimens.xMargin)),
+                                                          Dimens.marginMedium)),
                                           shape: MaterialStatePropertyAll(
                                               RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          24)))),
-                                      value: 'Normal',
+                                                  borderRadius: BorderRadius
+                                                      .circular(Dimens
+                                                          .borderRadiusMediumExtra)))),
+                                      value: AppConstants.volNormal,
                                       groupValue: volumeMode,
                                       onChanged: (value) {
                                         setState(() {
                                           volumeMode = value!;
                                         });
                                       },
-                                      child: const Text('Normal')),
+                                      child:
+                                          const Text(AppConstants.volNormal)),
                                   RadioMenuButton(
                                       style: ButtonStyle(
                                           padding:
                                               const MaterialStatePropertyAll(
                                                   EdgeInsets.symmetric(
                                                       horizontal:
-                                                          Dimens.xMargin)),
+                                                          Dimens.marginMedium)),
                                           shape: MaterialStatePropertyAll(
                                               RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          24)))),
-                                      value: 'Viberate',
+                                                  borderRadius: BorderRadius
+                                                      .circular(Dimens
+                                                          .borderRadiusMediumExtra)))),
+                                      value: AppConstants.volViberate,
                                       groupValue: volumeMode,
                                       onChanged: (value) {
                                         setState(() {
@@ -227,20 +232,21 @@ class _ScenarioState extends State<AddScenario> {
                                           volume = 0;
                                         });
                                       },
-                                      child: const Text('Viberate')),
+                                      child:
+                                          const Text(AppConstants.volViberate)),
                                   RadioMenuButton(
                                       style: ButtonStyle(
                                           padding:
                                               const MaterialStatePropertyAll(
                                                   EdgeInsets.symmetric(
                                                       horizontal:
-                                                          Dimens.xMargin)),
+                                                          Dimens.marginMedium)),
                                           shape: MaterialStatePropertyAll(
                                               RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          24)))),
-                                      value: 'Silent',
+                                                  borderRadius: BorderRadius
+                                                      .circular(Dimens
+                                                          .borderRadiusMediumExtra)))),
+                                      value: AppConstants.volSilent,
                                       groupValue: volumeMode,
                                       onChanged: (value) {
                                         setState(() {
@@ -248,13 +254,15 @@ class _ScenarioState extends State<AddScenario> {
                                           volume = 0;
                                         });
                                       },
-                                      child: const Text('Silent')),
+                                      child:
+                                          const Text(AppConstants.volSilent)),
                                 ],
                               ),
                             ),
                             const Padding(
-                              padding: EdgeInsets.only(top: 8),
-                              child: Text('Volume',
+                              padding:
+                                  EdgeInsets.only(top: Dimens.paddingDefault),
+                              child: Text(AppConstants.vol,
                                   style: TextStyle(
                                       fontSize: Dimens.fontLarge,
                                       fontWeight: FontWeight.w600)),
@@ -267,11 +275,12 @@ class _ScenarioState extends State<AddScenario> {
                                         onChanged: (value) {
                                           setState(() {
                                             volume = value;
-                                            volumeMode = 'Normal';
+                                            volumeMode = AppConstants.volNormal;
                                           });
                                         })),
                                 Padding(
-                                  padding: const EdgeInsets.all(8),
+                                  padding: const EdgeInsets.all(
+                                      Dimens.paddingDefault),
                                   child: Text(
                                     '${(volume * 100).ceil()}',
                                     style: const TextStyle(
@@ -286,24 +295,24 @@ class _ScenarioState extends State<AddScenario> {
             ),
           ),
           bottomNavigationBar: Padding(
-            padding: const EdgeInsets.symmetric(vertical: Dimens.xMargin),
+            padding: const EdgeInsets.symmetric(vertical: Dimens.marginMedium),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 TextButton(
                     style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                      vertical: Dimens.xMargin,
-                      horizontal: Dimens.xlMargin,
+                      vertical: Dimens.marginMedium,
+                      horizontal: Dimens.marginLarge,
                     )),
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel')),
+                    child: const Text(AppConstants.cancel)),
                 TextButton(
                     style: TextButton.styleFrom(
                         foregroundColor: scheme.primary,
                         padding: const EdgeInsets.symmetric(
-                          vertical: Dimens.xMargin,
-                          horizontal: Dimens.xlMargin,
+                          vertical: Dimens.marginMedium,
+                          horizontal: Dimens.marginLarge,
                         )),
                     onPressed: () {
                       if (startTime != const TimeOfDay(hour: 0, minute: 0) ||
@@ -321,7 +330,7 @@ class _ScenarioState extends State<AddScenario> {
                         Get.rawSnackbar(message: 'Set time first');
                       }
                     },
-                    child: const Text('Save'))
+                    child: const Text(AppConstants.save))
               ],
             ),
           ),

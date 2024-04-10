@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:volume_control/assets/dimens.dart';
 import 'package:volume_control/controller/dbcontroller.dart';
 import 'package:volume_control/model/scenario_model.dart';
+import 'package:volume_control/model/util/app_constants.dart';
+import '../model/util/dimens.dart';
 
 class ScenarioList extends StatefulWidget {
   const ScenarioList({super.key});
@@ -32,7 +33,7 @@ class _ScenarioListState extends State<ScenarioList> {
               scheme.primary,
               scheme.surface,
             ])),
-        padding: const EdgeInsets.symmetric(horizontal: Dimens.margin),
+        padding: const EdgeInsets.symmetric(horizontal: Dimens.marginDefault),
         child: GetBuilder<DBcontroller>(builder: (db) {
           return scenarioList.isEmpty
               ? Center(
@@ -46,9 +47,9 @@ class _ScenarioListState extends State<ScenarioList> {
                   itemBuilder: (context, index) {
                     ScenarioModel list = scenarioList[index];
                     return Card(
-                        margin: const EdgeInsets.all(Dimens.margin),
+                        margin: const EdgeInsets.all(Dimens.marginDefault),
                         child: Padding(
-                          padding: const EdgeInsets.all(Dimens.xMargin),
+                          padding: const EdgeInsets.all(Dimens.marginMedium),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -58,20 +59,21 @@ class _ScenarioListState extends State<ScenarioList> {
                                     fontWeight: FontWeight.w500),
                                 child: list.repeat.isEmpty
                                     ? const Text(
-                                        'Never',
+                                        AppConstants.dayNever,
                                       )
-                                    : list.repeat.length == 7
-                                        ? const Text('Everyday')
-                                        : Text(
-                                            (list.repeat.toString()..replaceAll('[', ''))
-                                              ..replaceAll(']', '')),
+                                    : list.repeat.length == Dimens.everyday
+                                        ? const Text(AppConstants.everyday)
+                                        : Text((list.repeat
+                                                .toString()
+                                                .replaceAll('[', ''))
+                                            .replaceAll(']', '')),
                               ),
                               ListTile(
                                 contentPadding: EdgeInsets.zero,
                                 title: Text(
                                   '${list.startTime.format(context)} - ${list.endTime.format(context)}',
                                   style: const TextStyle(
-                                      fontSize: Dimens.fontMedLarge,
+                                      fontSize: Dimens.fontMed,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 trailing: Row(
@@ -79,7 +81,7 @@ class _ScenarioListState extends State<ScenarioList> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     const Icon(Icons.phone_android),
-                                    const SizedBox(width: 8),
+                                    const SizedBox(width: Dimens.marginDefault),
                                     Switch.adaptive(
                                       onChanged: (value) {
                                         setState(() {

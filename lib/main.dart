@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:volume_control/assets/dimens.dart';
 import 'package:volume_control/controller/bindings.dart';
-import 'package:volume_control/view/add_scenario.dart';
+import 'package:volume_control/model/util/app_constants.dart';
+import 'package:volume_control/model/util/app_pages.dart';
+import 'package:volume_control/model/util/app_routes.dart';
 import 'package:volume_control/view/scenario_list.dart';
+import 'model/util/dimens.dart';
 
 void main(List<String> args) {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,11 +19,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       initialBinding: InitBindings(),
-      title: 'Volume Control',
-      routes: {
-        '/': (p0) => const MainPage(),
-        '/scenario': (p0) => const AddScenario()
-      },
+      title: AppConstants.appName,
+      initialRoute: AppPages.initial,
+      getPages: AppPages.pages,
+      defaultTransition: Transition.zoom,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.from(
           colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.deepPurple, brightness: Brightness.light),
@@ -49,11 +51,11 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       appBar: AppBar(
           bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(40),
+              preferredSize: const Size.fromHeight(Dimens.appBarHeight),
               child: Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(Dimens.paddingMedium),
                 alignment: Alignment.topLeft,
-                child: Text('No Scenario running',
+                child: Text(AppConstants.noScenarioText,
                     style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: Dimens.fontLarge,
@@ -64,8 +66,8 @@ class _MainPageState extends State<MainPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: scheme.primary,
         foregroundColor: scheme.onPrimary,
-        onPressed: () => Navigator.pushNamed(context, '/scenario'),
-        tooltip: 'Create a Scenario',
+        onPressed: () => Navigator.pushNamed(context, AppRoutes.addScenario),
+        tooltip: AppConstants.createScenario,
         child: const Icon(Icons.add_rounded),
       ),
     );

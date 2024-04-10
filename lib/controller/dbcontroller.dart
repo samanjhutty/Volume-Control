@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:volume_control/model/scenario_model.dart';
 
-import '../model/days_model.dart';
+import '../model/models/days_model.dart';
 
 class DBcontroller extends GetxController {
   /// Returns the days where selected is true.
