@@ -1,10 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:volume_control/model/scenario_model.dart';
-
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:volume_control/model/models/scenario_model.dart';
 import '../model/models/days_model.dart';
+import '../model/util/app_constants.dart';
 
 class DBcontroller extends GetxController {
+  RxList<ScenarioModel> scenarioList = <ScenarioModel>[].obs;
+  Box box = Hive.box(AppConstants.boxName);
+
+  @override
+  onInit() {
+    scenarioList.value = _getBoxList();
+    super.onInit();
+  }
+
+  List<ScenarioModel> _getBoxList() {
+    List list = [];
+    list = box.get(AppConstants.scenarioList, defaultValue: []);
+
+    return list.cast<ScenarioModel>();
+  }
+
   /// Returns the days where selected is true.
   List<String> daysRepeat() {
     List<String> list = [];
@@ -36,7 +54,7 @@ class DBcontroller extends GetxController {
   }
 
   /// Adds a new Scenario To scenarioList.
-  addScenario(
+  addScenario(BuildContext context,
       {required TimeOfDay startTime,
       required TimeOfDay endTime,
       required List<String> repeat,
@@ -45,19 +63,21 @@ class DBcontroller extends GetxController {
       required int volume,
       bool isON = true}) {
     scenarioList.add(ScenarioModel(
-        startTime: startTime,
-        endTime: endTime,
+        startTime: startTime.format(context),
+        endTime: endTime.format(context),
         repeat: repeat,
         title: title,
         volumeMode: volumeMode,
         volume: volume,
         isON: isON));
-    update();
-    print('data added');
+
+    /// write to storage
+    box.put(AppConstants.scenarioList, scenarioList);
+    print('data saved');
   }
 
   /// Updates an existing scenario to scenarioList.
-  updateScenario(
+  updateScenario(BuildContext context,
       {required int index,
       required TimeOfDay startTime,
       required TimeOfDay endTime,
@@ -69,14 +89,16 @@ class DBcontroller extends GetxController {
     scenarioList.insert(
         index,
         ScenarioModel(
-            startTime: startTime,
-            endTime: endTime,
+            startTime: startTime.format(context),
+            endTime: endTime.format(context),
             repeat: repeat,
             title: title,
             volumeMode: volumeMode,
             volume: volume,
             isON: isON));
-    update();
+
+    /// update values in storage
+    box.put(AppConstants.scenarioList, scenarioList);
     print('data updated');
   }
 }

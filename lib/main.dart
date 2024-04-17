@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:volume_control/controller/bindings.dart';
+import 'package:volume_control/model/models/scenario_model.dart';
 import 'package:volume_control/model/util/app_constants.dart';
 import 'package:volume_control/model/util/app_pages.dart';
 import 'package:volume_control/model/util/app_routes.dart';
 import 'package:volume_control/view/scenario_list.dart';
 import 'model/util/dimens.dart';
 
-void main(List<String> args) {
+void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(ScenarioModelAdapter());
+  await Hive.openBox(AppConstants.boxName);
+
   runApp(const MyApp());
 }
 

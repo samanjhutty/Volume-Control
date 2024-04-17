@@ -65,7 +65,7 @@ class Dimens {
   static const double appBarHeight = 40;
 
   /// size of 7
-  static const double everyday = 7;
+  static const double noOfDays = 7;
 
   /// size of 5
   static const double workingDays = 5;

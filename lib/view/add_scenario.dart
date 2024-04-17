@@ -25,7 +25,8 @@ class _ScenarioState extends State<AddScenario> {
 
   @override
   void initState() {
-    days = List.generate(7, (index) => Text(dayList[index].day));
+    days = List.generate(
+        Dimens.noOfDays.toInt(), (index) => Text(dayList[index].day));
     daySelected = dBcontroller.daysIsSelected();
     super.initState();
   }
@@ -124,10 +125,8 @@ class _ScenarioState extends State<AddScenario> {
                                   padding: const EdgeInsets.all(
                                       Dimens.marginDefault),
                                   child: repeatDays.isEmpty
-                                      ? const Text(
-                                          AppConstants.dayNever,
-                                        )
-                                      : repeatDays.length == Dimens.everyday
+                                      ? const Text(AppConstants.dayNever)
+                                      : repeatDays.length == Dimens.noOfDays
                                           ? const Text(AppConstants.everyday)
                                           : Text((repeatDays
                                                   .toString()
@@ -317,7 +316,7 @@ class _ScenarioState extends State<AddScenario> {
                     onPressed: () {
                       if (startTime != const TimeOfDay(hour: 0, minute: 0) ||
                           endTime != const TimeOfDay(hour: 0, minute: 0)) {
-                        dBcontroller.addScenario(
+                        dBcontroller.addScenario(context,
                             startTime: startTime,
                             endTime: endTime,
                             title: titleController.text,
