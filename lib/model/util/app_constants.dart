@@ -4,6 +4,8 @@ class AppConstants {
   /// app constants
   static const String appName = 'Volume Control';
   static const String timeOfDayFormat = 'Hms';
+  static const String bgTaskName = 'sc-schedular';
+  static String bgTaskID(String? id) => 'sc-schedular:$id';
 
   /// Hive constants
   static const String boxName = 'volume-conrtol';

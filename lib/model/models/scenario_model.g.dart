@@ -17,33 +17,36 @@ class ScenarioModelAdapter extends TypeAdapter<ScenarioModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ScenarioModel(
-      startTime: fields[0] as String,
-      endTime: fields[1] as String,
-      repeat: (fields[2] as List).cast<String>(),
-      title: fields[3] as String,
-      volumeMode: fields[4] as String,
-      volume: fields[5] as int,
-      isON: fields[6] as bool,
+      title: fields[0] as String,
+      tag: fields[1] as String,
+      startTime: fields[2] as String,
+      endTime: fields[3] as String,
+      repeat: (fields[4] as List).cast<String>(),
+      volumeMode: fields[5] as String,
+      volume: fields[6] as int,
+      isON: fields[7] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, ScenarioModel obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
-      ..write(obj.startTime)
-      ..writeByte(1)
-      ..write(obj.endTime)
-      ..writeByte(2)
-      ..write(obj.repeat)
-      ..writeByte(3)
       ..write(obj.title)
+      ..writeByte(1)
+      ..write(obj.tag)
+      ..writeByte(2)
+      ..write(obj.startTime)
+      ..writeByte(3)
+      ..write(obj.endTime)
       ..writeByte(4)
-      ..write(obj.volumeMode)
+      ..write(obj.repeat)
       ..writeByte(5)
-      ..write(obj.volume)
+      ..write(obj.volumeMode)
       ..writeByte(6)
+      ..write(obj.volume)
+      ..writeByte(7)
       ..write(obj.isON);
   }
 
