@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:volume_control/controller/dbcontroller.dart';
-import 'package:volume_control/model/scenario_model.dart';
+import 'package:volume_control/model/models/scenario_model.dart';
 import 'package:volume_control/model/util/app_constants.dart';
 import '../model/util/dimens.dart';
 
-class ScenarioList extends StatefulWidget {
+class ScenarioList extends GetView<DBcontroller> {
   const ScenarioList({super.key});
 
-  @override
-  State<ScenarioList> createState() => _ScenarioListState();
-}
-
-class _ScenarioListState extends State<ScenarioList> {
-  DBcontroller db = Get.find();
   @override
   Widget build(BuildContext context) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
@@ -34,8 +28,8 @@ class _ScenarioListState extends State<ScenarioList> {
               scheme.surface,
             ])),
         padding: const EdgeInsets.symmetric(horizontal: Dimens.marginDefault),
-        child: GetBuilder<DBcontroller>(builder: (db) {
-          return scenarioList.isEmpty
+        child: Obx(() {
+          return controller.scenarioList.isEmpty
               ? Center(
                   child: Text(
                     'Click on + icon to add scenarios',
@@ -43,9 +37,9 @@ class _ScenarioListState extends State<ScenarioList> {
                   ),
                 )
               : ListView.builder(
-                  itemCount: scenarioList.length,
+                  itemCount: controller.scenarioList.length,
                   itemBuilder: (context, index) {
-                    ScenarioModel list = scenarioList[index];
+                    ScenarioModel list = controller.scenarioList[index];
                     return Card(
                         margin: const EdgeInsets.all(Dimens.marginDefault),
                         child: Padding(
@@ -61,7 +55,7 @@ class _ScenarioListState extends State<ScenarioList> {
                                     ? const Text(
                                         AppConstants.dayNever,
                                       )
-                                    : list.repeat.length == Dimens.everyday
+                                    : list.repeat.length == Dimens.noOfDays
                                         ? const Text(AppConstants.everyday)
                                         : Text((list.repeat
                                                 .toString()
@@ -71,7 +65,7 @@ class _ScenarioListState extends State<ScenarioList> {
                               ListTile(
                                 contentPadding: EdgeInsets.zero,
                                 title: Text(
-                                  '${list.startTime.format(context)} - ${list.endTime.format(context)}',
+                                  '${list.startTime} - ${list.endTime}',
                                   style: const TextStyle(
                                       fontSize: Dimens.fontMed,
                                       fontWeight: FontWeight.bold),
@@ -80,16 +74,12 @@ class _ScenarioListState extends State<ScenarioList> {
                                   mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    const Icon(Icons.phone_android),
+                                    Image.asset(
+                                        AppConstants.toIcons(
+                                            list.volumeMode.toLowerCase()),
+                                        color: scheme.primary),
                                     const SizedBox(width: Dimens.marginDefault),
-                                    Switch.adaptive(
-                                      onChanged: (value) {
-                                        setState(() {
-                                          list.isON = value;
-                                        });
-                                      },
-                                      value: list.isON,
-                                    ),
+                                    _Switch(index: index)
                                   ],
                                 ),
                               ),
@@ -105,5 +95,31 @@ class _ScenarioListState extends State<ScenarioList> {
                         ));
                   });
         }));
+  }
+}
+
+class _Switch extends StatefulWidget {
+  final int index;
+  const _Switch({required this.index});
+
+  @override
+  State<_Switch> createState() => _SwitchState();
+}
+
+class _SwitchState extends State<_Switch> {
+  DBcontroller controller = Get.find();
+  @override
+  Widget build(BuildContext context) {
+    return Switch.adaptive(
+      onChanged: (value) {
+        setState(() {
+          controller.scenarioList[widget.index].isON = value;
+        });
+
+        /// writes the changes to local storage
+        controller.box.put(AppConstants.scenarioList, controller.scenarioList);
+      },
+      value: controller.scenarioList[widget.index].isON,
+    );
   }
 }
