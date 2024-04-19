@@ -42,7 +42,7 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   # resonsive layouts 
-  responsive_framework: ^1.4.0
+  responsive_framework: ^0.1.4
   # background tasks
   workmanager: ^0.5.2
   
