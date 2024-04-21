@@ -17,7 +17,7 @@ class AddScenarioController extends GetxController {
   Rx<TimeOfDay> startTime = const TimeOfDay(hour: 0, minute: 0).obs;
   Rx<TimeOfDay> endTime = const TimeOfDay(hour: 0, minute: 0).obs;
   late RxList<bool> daySelected;
-  late RxList<Widget> days;
+  RxList<Widget> days = <Widget>[].obs;
   RxList<String> repeatDays = <String>[].obs;
   RxString volumeMode = AppConstants.volNormal.obs;
   RxDouble volume = RxDouble(0);

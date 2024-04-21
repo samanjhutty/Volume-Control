@@ -12,19 +12,6 @@ import 'package:volume_control/view/scenario_list.dart';
 import 'package:workmanager/workmanager.dart';
 import 'model/util/dimens.dart';
 
-@pragma('vm:entry-point')
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) {
-    try {
-      print("workmanager:: backgroundTask: $task");
-    } catch (e) {
-      print('workmanger:: backgroundTask error: $e');
-      return Future.error(e);
-    }
-    return Future.value(true);
-  });
-}
-
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
@@ -46,13 +33,13 @@ class MyApp extends StatelessWidget {
       getPages: AppPages.pages,
       defaultTransition: Transition.zoom,
       debugShowCheckedModeBanner: false,
-      builder: (context, child) => ResponsiveBreakpoints.builder(
-        child: ClampingScrollWrapper.builder(context, child!),
+      builder: (context, child) => ResponsiveWrapper.builder(
+        ClampingScrollWrapper.builder(context, child!),
         breakpoints: [
-          const Breakpoint(start: 0, end: 450, name: MOBILE),
-          const Breakpoint(start: 451, end: 800, name: TABLET),
-          const Breakpoint(start: 801, end: 1920, name: DESKTOP),
-          const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
+          const ResponsiveBreakpoint.resize(450, name: MOBILE),
+          const ResponsiveBreakpoint.autoScale(600, name: TABLET),
+          const ResponsiveBreakpoint.resize(800, name: DESKTOP),
+          const ResponsiveBreakpoint.autoScale(1700, name: '4K'),
         ],
       ),
       theme: ThemeData.from(
@@ -113,4 +100,17 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
+}
+
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) {
+    try {
+      print("workmanager:: backgroundTask: $task");
+    } catch (e) {
+      print('workmanger:: backgroundTask error: $e');
+      return Future.error(e);
+    }
+    return Future.value(true);
+  });
 }

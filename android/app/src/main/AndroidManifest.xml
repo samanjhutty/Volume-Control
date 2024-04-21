@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.volume_control">
+    package="com.samtech.volume_control">
    <application
         android:label="Volume Control"
         android:name="${applicationName}"
