@@ -1,22 +1,24 @@
-import 'package:flutter/foundation.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:volume_control/controller/bindings.dart';
+import 'package:volume_control/model/models/current_system_settings.dart';
 import 'package:volume_control/model/models/scenario_model.dart';
 import 'package:volume_control/model/util/app_constants.dart';
 import 'package:volume_control/model/util/app_pages.dart';
 import 'package:volume_control/model/util/app_routes.dart';
 import 'package:volume_control/view/scenario_list.dart';
-import 'package:workmanager/workmanager.dart';
 import 'model/util/dimens.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(ScenarioModelAdapter());
+  Hive.registerAdapter(CurrentSystemSettingsAdapter());
   await Hive.openBox(AppConstants.boxName);
+  await AndroidAlarmManager.initialize();
 
   runApp(const MyApp());
 }
@@ -55,23 +57,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MainPage extends StatefulWidget {
+class MainPage extends StatelessWidget {
   const MainPage({super.key});
-
-  @override
-  State<MainPage> createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-  @override
-  void initState() {
-    Workmanager().initialize(
-        callbackDispatcher, // The top level function, aka callbackDispatcher
-        isInDebugMode:
-            kDebugMode // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
-        );
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,17 +87,4 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
-}
-
-@pragma('vm:entry-point')
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) {
-    try {
-      print("workmanager:: backgroundTask: $task");
-    } catch (e) {
-      print('workmanger:: backgroundTask error: $e');
-      return Future.error(e);
-    }
-    return Future.value(true);
-  });
 }

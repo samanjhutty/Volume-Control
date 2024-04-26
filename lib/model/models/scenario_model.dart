@@ -12,6 +12,7 @@ class ScenarioModel {
       required this.volumeMode,
       required this.volume,
       required this.isON});
+
   @HiveField(0)
   String title;
 
@@ -36,6 +37,16 @@ class ScenarioModel {
   @HiveField(7)
   bool isON;
 
+  factory ScenarioModel.fromJson(Map<String, dynamic> json) => ScenarioModel(
+      title: json['title'],
+      tag: json['tag'],
+      startTime: json['start_date'],
+      endTime: json['end_date'],
+      repeat: json['repeat'],
+      volumeMode: json['volume_mode'],
+      volume: json['volume'],
+      isON: json['is_on']);
+
   Map<String, dynamic> toJson() => {
         'title': title,
         'tag': tag,
@@ -52,4 +63,12 @@ class ScenarioDay {
   ScenarioDay({required this.day, required this.selected});
   String day;
   bool selected;
+
+  factory ScenarioDay.fromJson(Map<String, dynamic> json) =>
+      ScenarioDay(day: json['day'], selected: json['selected']);
+
+  Map<String, dynamic> toJson() => {
+        'day': day,
+        'selected': selected,
+      };
 }
