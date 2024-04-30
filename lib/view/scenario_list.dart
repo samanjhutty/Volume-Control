@@ -1,3 +1,4 @@
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:volume_control/controller/dbcontroller.dart';
@@ -115,6 +116,13 @@ class _SwitchState extends State<_Switch> {
         setState(() {
           controller.scenarioList[widget.index].isON = value;
         });
+        if (value) {
+          controller.bgSchedular(controller.scenarioList[widget.index].tag,
+              controller.scenarioList[widget.index].startTime);
+        } else {
+          AndroidAlarmManager.cancel(
+              int.parse(controller.scenarioList[widget.index].tag));
+        }
 
         /// writes the changes to local storage
         controller.box.put(AppConstants.scenarioList, controller.scenarioList);

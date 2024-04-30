@@ -5,11 +5,13 @@ class AppConstants {
   static const String appName = 'Volume Control';
   static const String timeOfDayFormat = 'Hms';
   static const String bgTaskName = 'sc-schedular';
-  static String bgTaskID(String? id) => 'sc-schedular:$id';
+  static String bgTaskStartID(String? id) => 'sc-start:$id';
+  static String bgTaskEndID(String? id) => 'sc-end:$id';
 
   /// Hive constants
   static const String boxName = 'volume-conrtol';
   static const String scenarioList = 'scenarioList';
+  static const String systemSettings = 'system-settings';
 
   /// volume mode constants
   static const String vol = 'Volume';

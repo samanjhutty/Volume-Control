@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:sound_mode/sound_mode.dart';
+import 'package:sound_mode/utils/ringer_mode_statuses.dart';
 import 'package:volume_control/controller/dbcontroller.dart';
+import 'package:volume_control/model/models/current_system_settings.dart';
 import 'package:volume_control/model/util/app_constants.dart';
-import 'package:workmanager/workmanager.dart';
-
 import '../model/models/scenario_model.dart';
 import '../model/util/dimens.dart';
 
+Box box = Hive.box(AppConstants.boxName);
+
 class AddScenarioController extends GetxController {
-  Box box = Hive.box(AppConstants.boxName);
   DBcontroller dBcontroller = Get.find();
 
   Rx<TextEditingController> titleController =
@@ -79,9 +82,10 @@ class AddScenarioController extends GetxController {
   }
 
   /// Adds a new Scenario To scenarioList.
-  addScenario(BuildContext context) {
+  addScenario(BuildContext context, {int? index}) {
     String tag = DateTime.now().toString();
-    dBcontroller.scenarioList.add(ScenarioModel(
+
+    ScenarioModel data = ScenarioModel(
         title: titleController.value.text,
         tag: tag,
         startTime: startTime.value.format(context),
@@ -89,38 +93,46 @@ class AddScenarioController extends GetxController {
         repeat: repeatDays,
         volumeMode: volumeMode.value,
         volume: volume.value.toInt(),
-        isON: repeatDays.isEmpty ? false : true));
+        isON: repeatDays.isEmpty ? false : true);
+
+    if (index != null) {
+      dBcontroller.scenarioList.insert(index, data);
+      print('data updated..');
+    } else {
+      dBcontroller.scenarioList.add(data);
+      print('data saved..');
+    }
 
     /// write to storage
     box.put(AppConstants.scenarioList, dBcontroller.scenarioList);
-    print('data saved');
-
-    try {
-      Workmanager().registerOneOffTask(
-          AppConstants.bgTaskID(tag), AppConstants.bgTaskName);
-    } catch (e) {
-      print('workmanager:: schedular error: $e');
-    }
   }
+}
 
-  /// Updates an existing scenario to scenarioList.
-  updateScenario(BuildContext context, {required int index}) {
-    String tag = DateTime.now().toString();
-
-    dBcontroller.scenarioList.insert(
-        index,
-        ScenarioModel(
-            title: titleController.value.text,
-            tag: tag,
-            startTime: startTime.value.format(context),
-            endTime: endTime.value.format(context),
-            repeat: repeatDays,
-            volumeMode: volumeMode.value,
-            volume: volume.value.toInt(),
-            isON: repeatDays.isEmpty ? false : true));
-
-    /// update values in storage
-    box.put(AppConstants.scenarioList, dBcontroller.scenarioList);
-    print('data updated');
+@pragma('vm:entry-point')
+Future<void> bgTask() async {
+  AddScenarioController db = Get.find();
+  await box.put(
+      AppConstants.systemSettings,
+      CurrentSystemSettings(
+          volume: db.volume.value.toInt(), volMode: db.volumeMode.value));
+  switch (db.volumeMode.value) {
+    case AppConstants.volNormal:
+      {
+        await FlutterVolumeController.setVolume(db.volume.value);
+        await SoundMode.setSoundMode(RingerModeStatus.normal);
+      }
+      break;
+    case AppConstants.volSilent:
+      {
+        await FlutterVolumeController.setVolume(db.volume.value);
+        await SoundMode.setSoundMode(RingerModeStatus.silent);
+      }
+      break;
+    case AppConstants.volViberate:
+      {
+        await FlutterVolumeController.setVolume(db.volume.value);
+        await SoundMode.setSoundMode(RingerModeStatus.vibrate);
+      }
+      break;
   }
 }
