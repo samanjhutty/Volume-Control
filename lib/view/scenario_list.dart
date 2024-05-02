@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:volume_control/controller/dbcontroller.dart';
 import 'package:volume_control/model/models/scenario_model.dart';
 import 'package:volume_control/model/util/app_constants.dart';
+import 'package:volume_control/model/util/entension_methods.dart';
 import '../model/util/dimens.dart';
 
 class ScenarioList extends GetView<DBcontroller> {
@@ -20,12 +21,14 @@ class ScenarioList extends GetView<DBcontroller> {
                 end: Alignment.bottomCenter,
                 stops: const [
               0,
-              0.4,
+              0.3,
+              0.7,
               1,
             ],
                 colors: [
-              scheme.primary,
-              scheme.primary,
+              scheme.primaryContainer,
+              scheme.primaryContainer.withOpacity(0.8),
+              scheme.surface,
               scheme.surface,
             ])),
         padding: const EdgeInsets.symmetric(horizontal: Dimens.marginDefault),
@@ -41,57 +44,144 @@ class ScenarioList extends GetView<DBcontroller> {
                   itemCount: controller.scenarioList.length,
                   itemBuilder: (context, index) {
                     ScenarioModel list = controller.scenarioList[index];
+                    Color textColor = scheme.onPrimaryContainer;
+
                     return Card(
+                        color: scheme.secondaryContainer,
+                        elevation: Dimens.sizeExtraSmall,
                         margin: const EdgeInsets.all(Dimens.marginDefault),
                         child: Padding(
-                          padding: const EdgeInsets.all(Dimens.marginMedium),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              DefaultTextStyle(
-                                style: TextStyle(
-                                    color: scheme.primary,
-                                    fontWeight: FontWeight.w500),
-                                child: list.repeat.isEmpty
-                                    ? const Text(
-                                        AppConstants.dayNever,
-                                      )
-                                    : list.repeat.length == Dimens.noOfDays
-                                        ? const Text(AppConstants.everyday)
-                                        : Text((list.repeat
-                                                .toString()
-                                                .replaceAll('[', ''))
-                                            .replaceAll(']', '')),
-                              ),
-                              ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                title: Text(
-                                  '${list.startTime} - ${list.endTime}',
-                                  style: const TextStyle(
-                                      fontSize: Dimens.fontMed,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                          padding: const EdgeInsets.fromLTRB(
+                            Dimens.marginMedium,
+                            Dimens.marginMedium,
+                            Dimens.marginMedium,
+                            Dimens.zero,
+                          ),
+                          child: IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Image.asset(
-                                        AppConstants.toIcons(
-                                            list.volumeMode.toLowerCase()),
-                                        color: scheme.primary),
-                                    const SizedBox(width: Dimens.marginDefault),
-                                    _Switch(index: index)
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          controller
+                                              .repeatDaysText(list.repeat),
+                                          style: TextStyle(
+                                              color: textColor,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        const SizedBox(
+                                            height: Dimens.marginDefault),
+                                        DefaultTextStyle(
+                                          style: TextStyle(
+                                              color: textColor,
+                                              fontSize: Dimens.fontExtraLarge,
+                                              fontWeight: FontWeight.bold),
+                                          child: Obx(
+                                            () => Row(
+                                              children: [
+                                                Text(
+                                                  controller.is24hrFormat.value
+                                                      ? list
+                                                          .startTime
+                                                          .toTimeOfDay
+                                                          .formatTime24H
+                                                      : list
+                                                          .startTime.toTimeOfDay
+                                                          .format(context),
+                                                ),
+                                                const Text(' - '),
+                                                Text(
+                                                  controller.is24hrFormat.value
+                                                      ? list.endTime.toTimeOfDay
+                                                          .formatTime24H
+                                                      : list.endTime.toTimeOfDay
+                                                          .format(context),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      list.title,
+                                      style: TextStyle(
+                                          color: textColor,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    const SizedBox(height: Dimens.marginSmall),
                                   ],
                                 ),
-                              ),
-                              list.title.isNotEmpty
-                                  ? Text(
-                                      list.title,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    )
-                                  : const SizedBox()
-                            ],
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Image.asset(
+                                            AppConstants.toIcons(
+                                                list.volumeMode.toLowerCase()),
+                                            height: Dimens.sizeDefault,
+                                            color: textColor),
+                                        const SizedBox(
+                                            width: Dimens.marginDefault),
+                                        _Switch(index: index)
+                                      ],
+                                    ),
+                                    PopupMenuButton(
+                                        iconColor: textColor,
+                                        itemBuilder: (context) => [
+                                              PopupMenuItem(
+                                                child: const Row(
+                                                  children: [
+                                                    Icon(Icons
+                                                        .edit_notifications),
+                                                    SizedBox(
+                                                        width: Dimens
+                                                            .paddingDefault),
+                                                    Text('Edit'),
+                                                  ],
+                                                ),
+                                                onTap: () {},
+                                              ),
+                                              PopupMenuItem(
+                                                child: const Row(
+                                                  children: [
+                                                    Icon(Icons.delete),
+                                                    SizedBox(
+                                                        width: Dimens
+                                                            .paddingDefault),
+                                                    Text('Delete'),
+                                                  ],
+                                                ),
+                                                onTap: () async {
+                                                  controller.scenarioList
+                                                      .removeAt(index);
+
+                                                  /// writes the changes to local storage
+                                                  controller.saveList(
+                                                      controller.scenarioList);
+
+                                                  // cancels the schedule
+                                                  await AndroidAlarmManager
+                                                      .cancel(list.tag);
+                                                },
+                                              ),
+                                            ]),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ));
                   });
@@ -109,23 +199,31 @@ class _Switch extends StatefulWidget {
 
 class _SwitchState extends State<_Switch> {
   DBcontroller controller = Get.find();
+
   @override
   Widget build(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+
     return Switch.adaptive(
+      activeColor: scheme.primaryContainer,
+      activeTrackColor: scheme.onPrimaryContainer,
       onChanged: (value) {
         setState(() {
           controller.scenarioList[widget.index].isON = value;
         });
         if (value) {
-          controller.bgSchedular(controller.scenarioList[widget.index].tag,
-              controller.scenarioList[widget.index].startTime);
+          print(
+              'time of day: ${controller.scenarioList[widget.index].startTime}');
+          controller.bgSchedular(
+              controller.scenarioList[widget.index].tag,
+              controller.dateTimeFromTimeOfDay(
+                  controller.scenarioList[widget.index].startTime.toTimeOfDay));
         } else {
-          AndroidAlarmManager.cancel(
-              int.parse(controller.scenarioList[widget.index].tag));
+          AndroidAlarmManager.cancel(controller.scenarioList[widget.index].tag);
         }
 
         /// writes the changes to local storage
-        controller.box.put(AppConstants.scenarioList, controller.scenarioList);
+        controller.saveList(controller.scenarioList);
       },
       value: controller.scenarioList[widget.index].isON,
     );

@@ -18,7 +18,7 @@ class ScenarioModelAdapter extends TypeAdapter<ScenarioModel> {
     };
     return ScenarioModel(
       title: fields[0] as String,
-      tag: fields[1] as String,
+      tag: fields[1] as int,
       startTime: fields[2] as String,
       endTime: fields[3] as String,
       repeat: (fields[4] as List).cast<String>(),

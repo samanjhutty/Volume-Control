@@ -7,6 +7,7 @@ import 'package:sound_mode/utils/ringer_mode_statuses.dart';
 import 'package:volume_control/controller/dbcontroller.dart';
 import 'package:volume_control/model/models/current_system_settings.dart';
 import 'package:volume_control/model/util/app_constants.dart';
+import 'package:volume_control/model/util/entension_methods.dart';
 import '../model/models/scenario_model.dart';
 import '../model/util/dimens.dart';
 
@@ -19,11 +20,12 @@ class AddScenarioController extends GetxController {
       TextEditingController(text: '').obs;
   Rx<TimeOfDay> startTime = const TimeOfDay(hour: 0, minute: 0).obs;
   Rx<TimeOfDay> endTime = const TimeOfDay(hour: 0, minute: 0).obs;
-  late RxList<bool> daySelected;
+  RxList<bool> daySelected = <bool>[].obs;
   RxList<Widget> days = <Widget>[].obs;
   RxList<String> repeatDays = <String>[].obs;
   RxString volumeMode = AppConstants.volNormal.obs;
   RxDouble volume = RxDouble(0);
+  int? updateList;
 
   RxList<ScenarioDay> dayList = [
     ScenarioDay(day: 'Mon', selected: false),
@@ -39,6 +41,9 @@ class AddScenarioController extends GetxController {
   void onInit() {
     days.value = List.generate(
         Dimens.noOfDays.toInt(), (index) => Text(dayList[index].day));
+    if (Get.arguments != null) {
+      updateList = Get.arguments;
+    }
     daySelected.value = daysIsSelected();
     super.onInit();
   }
@@ -52,13 +57,16 @@ class AddScenarioController extends GetxController {
   }
 
   /// Returns a DateTime picker Widget.
-  Future myTimePicker({required context}) async {
-    return await showTimePicker(
+  Future<TimeOfDay?> myTimePicker({required context}) async {
+    TimeOfDay? time = await showTimePicker(
         builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+            data: MediaQuery.of(context).copyWith(
+                alwaysUse24HourFormat: dBcontroller.is24hrFormat.value),
             child: child!),
         context: context,
         initialTime: const TimeOfDay(hour: 0, minute: 0));
+
+    return time;
   }
 
   /// Returns the days where selected is true.
@@ -82,21 +90,21 @@ class AddScenarioController extends GetxController {
   }
 
   /// Adds a new Scenario To scenarioList.
-  addScenario(BuildContext context, {int? index}) {
-    String tag = DateTime.now().toString();
-
+  addScenario() {
+    int tag = dBcontroller.scenarioList.length + 1;
+    print('tag $tag');
     ScenarioModel data = ScenarioModel(
         title: titleController.value.text,
         tag: tag,
-        startTime: startTime.value.format(context),
-        endTime: endTime.value.format(context),
+        startTime: startTime.value.formatTime24H,
+        endTime: endTime.value.formatTime24H,
         repeat: repeatDays,
         volumeMode: volumeMode.value,
         volume: volume.value.toInt(),
         isON: repeatDays.isEmpty ? false : true);
 
-    if (index != null) {
-      dBcontroller.scenarioList.insert(index, data);
+    if (updateList != null) {
+      dBcontroller.scenarioList.insert(updateList!, data);
       print('data updated..');
     } else {
       dBcontroller.scenarioList.add(data);
@@ -104,7 +112,13 @@ class AddScenarioController extends GetxController {
     }
 
     /// write to storage
-    box.put(AppConstants.scenarioList, dBcontroller.scenarioList);
+    dBcontroller.saveList(dBcontroller.scenarioList);
+
+    /// schedule task
+    if (repeatDays.isNotEmpty) {
+      dBcontroller.bgSchedular(
+          tag, Get.find<DBcontroller>().dateTimeFromTimeOfDay(startTime.value));
+    }
   }
 }
 

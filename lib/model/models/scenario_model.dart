@@ -17,7 +17,7 @@ class ScenarioModel {
   String title;
 
   @HiveField(1)
-  String tag;
+  int tag;
 
   @HiveField(2)
   String startTime;

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 class AppConstants {
@@ -12,6 +13,7 @@ class AppConstants {
   static const String boxName = 'volume-conrtol';
   static const String scenarioList = 'scenarioList';
   static const String systemSettings = 'system-settings';
+  static const String is24hr = '24hr-format';
 
   /// volume mode constants
   static const String vol = 'Volume';
@@ -35,10 +37,13 @@ class AppConstants {
   static const String sceName = 'Scenario Name';
   static const String save = 'Save';
   static const String cancel = 'Cancel';
+  static const String settings = 'Settings';
 
   static String toIcons(String icon) => 'assets/icons/$icon.png';
 }
 
 void logPrint(String? message) {
-  Get.log('GetX log: ${message ?? 'null'}');
+  if (kDebugMode) {
+    Get.log(message ?? 'null');
+  }
 }

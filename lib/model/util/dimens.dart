@@ -1,6 +1,9 @@
 class Dimens {
   const Dimens();
 
+  /// size of 0
+  static const double zero = 0;
+
   /// size of 4
   static const double marginSmall = 4;
 
@@ -33,6 +36,9 @@ class Dimens {
 
   /// size of 32
   static const double borderRadiusLarge = 32;
+
+  /// size of 4
+  static const double borderRadiusSmall = 4;
 
   /// size of 8
   static const double borderRadiusDefault = 8;
@@ -69,4 +75,25 @@ class Dimens {
 
   /// size of 5
   static const double workingDays = 5;
+
+  /// size of 8
+  static const double sizeExtraSmall = 8;
+
+  /// size of 16
+  static const double sizeSmall = 16;
+
+  /// size of 20
+  static const double sizeDefault = 20;
+
+  /// size of 24
+  static const double sizeMedium = 24;
+
+  /// size of 32
+  static const double sizeLarge = 32;
+
+  /// size of 40
+  static const double sizeExtraLarge = 40;
+
+  /// size of 46
+  static const double sizeExtraDoubleLarge = 46;
 }
