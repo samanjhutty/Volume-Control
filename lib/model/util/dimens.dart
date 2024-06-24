@@ -67,15 +67,6 @@ class Dimens {
   /// size of 32
   static const double fontSuperLarge = 32;
 
-  /// size of 40
-  static const double appBarHeight = 40;
-
-  /// size of 7
-  static const double noOfDays = 7;
-
-  /// size of 5
-  static const double workingDays = 5;
-
   /// size of 8
   static const double sizeExtraSmall = 8;
 

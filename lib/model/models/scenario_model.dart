@@ -14,7 +14,7 @@ class ScenarioModel {
       required this.isON});
 
   @HiveField(0)
-  String title;
+  String? title;
 
   @HiveField(1)
   int tag;

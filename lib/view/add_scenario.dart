@@ -1,7 +1,8 @@
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:volume_control/controller/add_scenario_controller.dart';
-import 'package:volume_control/controller/dbcontroller.dart';
+import 'package:volume_control/view_model/add_scenario_controller.dart';
+import 'package:volume_control/view_model/dbcontroller.dart';
 import 'package:volume_control/model/util/app_constants.dart';
 import 'package:volume_control/model/util/entension_methods.dart';
 import '../model/util/dimens.dart';
@@ -17,6 +18,28 @@ class AddScenario extends GetView<AddScenarioController> {
       appBar: AppBar(
         backgroundColor: scheme.primaryContainer,
         foregroundColor: scheme.onPrimaryContainer,
+        actions: [
+          IconButton(
+              onPressed: controller.updateList != null
+                  ? () async {
+                      Get.find<DBcontroller>()
+                          .scenarioList
+                          .removeAt(controller.updateList!);
+                      Get.back();
+
+                      /// writes the changes to local storage
+                      Get.find<DBcontroller>()
+                          .saveList(Get.find<DBcontroller>().scenarioList);
+
+                      // cancels the schedule
+                      await AndroidAlarmManager.cancel(controller.updateList!);
+                    }
+                  : () => Get.back(),
+              icon: Icon(
+                Icons.delete,
+                color: scheme.error,
+              ))
+        ],
       ),
       body: ColoredBox(
         color: scheme.primaryContainer,
@@ -69,7 +92,7 @@ class AddScenario extends GetView<AddScenarioController> {
                               onTap: () async {
                                 TimeOfDay? time = await controller.myTimePicker(
                                     context: context);
-                                print('time $time');
+
                                 if (time != null) {
                                   if (time == controller.startTime.value) {
                                     Get.rawSnackbar(
@@ -139,9 +162,13 @@ class AddScenario extends GetView<AddScenarioController> {
                                         onPressed: (index) {
                                           controller.daySelected[index] =
                                               !controller.daySelected[index];
-                                          controller.dayList[index].selected =
-                                              !controller
-                                                  .dayList[index].selected;
+                                          if (controller.daySelected[index]) {
+                                            controller.dayList[index].selected =
+                                                true;
+                                          } else {
+                                            controller.dayList[index].selected =
+                                                false;
+                                          }
                                           controller.repeatDays.value =
                                               controller.daysRepeat();
                                         },
@@ -307,6 +334,7 @@ class AddScenario extends GetView<AddScenarioController> {
                   onPressed: () {
                     if (controller.startTime.value !=
                         controller.endTime.value) {
+                      logPrint('log: build ${controller.repeatDays}');
                       controller.addScenario();
                       Navigator.pop(context);
                     } else {

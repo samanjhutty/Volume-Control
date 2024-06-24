@@ -15,6 +15,12 @@ class AppConstants {
   static const String systemSettings = 'system-settings';
   static const String is24hr = '24hr-format';
 
+  /// notification constants
+  static const String channelId = 'sc-notify';
+  static const String channelName = 'Routine ';
+  static const String channelDesc =
+      'Notificatons regarding volume control routines';
+
   /// volume mode constants
   static const String vol = 'Volume';
   static const String volMode = 'Mode';

@@ -17,7 +17,7 @@ class ScenarioModelAdapter extends TypeAdapter<ScenarioModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ScenarioModel(
-      title: fields[0] as String,
+      title: fields[0] as String?,
       tag: fields[1] as int,
       startTime: fields[2] as String,
       endTime: fields[3] as String,

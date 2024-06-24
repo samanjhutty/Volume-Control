@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:volume_control/controller/add_scenario_controller.dart';
-import 'package:volume_control/controller/dbcontroller.dart';
+import 'package:volume_control/view_model/add_scenario_controller.dart';
+import 'package:volume_control/view_model/dbcontroller.dart';
 import 'package:volume_control/model/util/app_constants.dart';
 
 class Settings extends StatelessWidget {
