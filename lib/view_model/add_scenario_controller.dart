@@ -56,12 +56,14 @@ class AddScenarioController extends GetxController {
     ScenarioModel data = dBcontroller.scenarioList[index];
     logPrint('model data: onEdit ${data.toJson()}');
 
-    startTime.value = data.startTime.toTimeOfDay;
-    endTime.value = data.endTime.toTimeOfDay;
-    repeatDays.value = data.repeat;
+    startTime.value =
+        data.startTime?.toTimeOfDay ?? const TimeOfDay(hour: 0, minute: 0);
+    endTime.value =
+        data.endTime?.toTimeOfDay ?? const TimeOfDay(hour: 0, minute: 0);
+    repeatDays.value = data.repeat ?? [];
     titleController.value.text = data.title ?? '';
-    volumeMode.value = data.volumeMode;
-    volume.value = data.volume / 100;
+    volumeMode.value = data.volumeMode ?? '';
+    volume.value = (data.volume ?? 0) / 100;
 
     _toggleButtons();
   }
@@ -119,7 +121,7 @@ class AddScenarioController extends GetxController {
 
   /// Adds a new Scenario To scenarioList.
   addScenario() {
-    int tag = updateList ?? dBcontroller.scenarioList.length + 1;
+    int tag = updateList ?? dBcontroller.scenarioList.length;
     ScenarioModel data = ScenarioModel(
         title: titleController.value.text.isEmpty
             ? null

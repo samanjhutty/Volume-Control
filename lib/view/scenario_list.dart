@@ -67,7 +67,8 @@ class ScenarioList extends GetView<DBcontroller> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      controller.repeatDaysText(list.repeat),
+                                      controller
+                                          .repeatDaysText(list.repeat ?? []),
                                       style: TextStyle(
                                           color: textColor,
                                           fontWeight: FontWeight.w500),
@@ -84,18 +85,22 @@ class ScenarioList extends GetView<DBcontroller> {
                                           children: [
                                             Text(
                                               controller.is24hrFormat.value
-                                                  ? list.startTime.toTimeOfDay
-                                                      .formatTime24H
-                                                  : list.startTime.toTimeOfDay
-                                                      .format(context),
+                                                  ? list.startTime?.toTimeOfDay
+                                                          .formatTime24H ??
+                                                      ''
+                                                  : list.startTime?.toTimeOfDay
+                                                          .format(context) ??
+                                                      '',
                                             ),
                                             const Text(' - '),
                                             Text(
                                               controller.is24hrFormat.value
-                                                  ? list.endTime.toTimeOfDay
-                                                      .formatTime24H
-                                                  : list.endTime.toTimeOfDay
-                                                      .format(context),
+                                                  ? list.endTime?.toTimeOfDay
+                                                          .formatTime24H ??
+                                                      ''
+                                                  : list.endTime?.toTimeOfDay
+                                                          .format(context) ??
+                                                      '',
                                             ),
                                           ],
                                         ),
@@ -120,7 +125,8 @@ class ScenarioList extends GetView<DBcontroller> {
                                   children: [
                                     Image.asset(
                                         AppConstants.toIcons(
-                                            list.volumeMode.toLowerCase()),
+                                            list.volumeMode?.toLowerCase() ??
+                                                ''),
                                         height: Dimens.sizeDefault,
                                         color: textColor),
                                     const SizedBox(width: Dimens.marginDefault),
@@ -164,17 +170,19 @@ class _SwitchState extends State<_Switch> {
           logPrint(
               'time of day: ${controller.scenarioList[widget.index].startTime}');
           bgSchedular(
-              controller.scenarioList[widget.index].tag,
-              controller.dateTimeFromTimeOfDay(
-                  controller.scenarioList[widget.index].startTime.toTimeOfDay));
+              controller.scenarioList[widget.index].tag!,
+              controller.dateTimeFromTimeOfDay(controller
+                      .scenarioList[widget.index].startTime?.toTimeOfDay ??
+                  const TimeOfDay(hour: 0, minute: 0)));
         } else {
-          AndroidAlarmManager.cancel(controller.scenarioList[widget.index].tag);
+          AndroidAlarmManager.cancel(
+              controller.scenarioList[widget.index].tag!);
         }
 
         /// writes the changes to local storage
         controller.saveList(controller.scenarioList);
       },
-      value: controller.scenarioList[widget.index].isON,
+      value: controller.scenarioList[widget.index].isON ?? false,
     );
   }
 }

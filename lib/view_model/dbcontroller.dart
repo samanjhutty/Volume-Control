@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
@@ -10,7 +12,6 @@ import 'package:volume_control/model/models/scenario_model.dart';
 import 'package:volume_control/model/notification_services.dart';
 import '../model/models/current_system_settings.dart';
 import '../model/util/app_constants.dart';
-import 'add_scenario_controller.dart';
 
 class DBcontroller extends GetxController {
   RxList<ScenarioModel> scenarioList = <ScenarioModel>[].obs;
@@ -36,7 +37,8 @@ class DBcontroller extends GetxController {
     List list = [];
     list = box.get(AppConstants.scenarioList, defaultValue: []);
 
-    return list.cast<ScenarioModel>();
+    return List<ScenarioModel>.from(
+        list.map((json) => ScenarioModel.fromJson(jsonDecode(json))));
   }
 
   checkPermissions() async {
@@ -78,7 +80,8 @@ class DBcontroller extends GetxController {
   }
 
   Future<void> saveList(List<ScenarioModel> list) async {
-    await box.put(AppConstants.scenarioList, list);
+    await box.put(AppConstants.scenarioList,
+        list.map((e) => jsonEncode(e.toJson())).toList());
   }
 
   /// Converts TimeOfDay to DateTime
@@ -94,19 +97,20 @@ Future<bool> bgSchedular(int tag, DateTime startTime) =>
     AndroidAlarmManager.periodic(
       const Duration(minutes: 1),
       tag,
-      () {
-        logPrint('task scheduled');
-        bgTask(tag);
-      },
+      bgTask,
       startAt: startTime,
       exact: true,
       wakeup: true,
     );
 
-@pragma('vm:entry-point')
-Future<void> bgTask(int tag) async {
-  ScenarioModel? data =
-      (box.get(AppConstants.scenarioList) as List<ScenarioModel>)[tag];
+Future<void> bgTask(int? tag) async {
+  logPrint('task running...');
+  await Hive.initFlutter();
+  var box = await Hive.openBox(AppConstants.boxName);
+  List list = box.get(AppConstants.scenarioList);
+  ScenarioModel? data = List<ScenarioModel>.from(
+          list.map((json) => ScenarioModel.fromJson(jsonDecode(json))))
+      .elementAt(tag ?? 0);
 
   logPrint('bgTask data: ${data.toJson()}');
 
@@ -125,33 +129,36 @@ Future<void> bgTask(int tag) async {
       break;
   }
 
-  await box.put(AppConstants.systemSettings,
-      CurrentSystemSettings(volume: currentVolume?.toInt(), volMode: volMode));
+  await box.put(
+      AppConstants.systemSettings,
+      jsonEncode(CurrentSystemSettings(
+              volume: currentVolume?.toInt(), volMode: volMode)
+          .toJson()));
 
   logPrint(
       'bgTask currentSettings: ${CurrentSystemSettings(volume: currentVolume?.toInt(), volMode: volMode).toJson()}');
 
   NotificationServices.showNotification(
-      id: tag,
+      id: tag ?? 0,
       title: '${data.title ?? 'Scenario'} runnung',
       body: 'you current routine will end at ${data.endTime}',
       payload: '');
   switch (data.volumeMode) {
     case AppConstants.volSilent:
       {
-        await FlutterVolumeController.setVolume(data.volume.toDouble());
+        await FlutterVolumeController.setVolume(data.volume?.toDouble() ?? 0);
         await SoundMode.setSoundMode(RingerModeStatus.silent);
       }
       break;
     case AppConstants.volViberate:
       {
-        await FlutterVolumeController.setVolume(data.volume.toDouble());
+        await FlutterVolumeController.setVolume(data.volume?.toDouble() ?? 0);
         await SoundMode.setSoundMode(RingerModeStatus.vibrate);
       }
       break;
     default:
       {
-        await FlutterVolumeController.setVolume(data.volume.toDouble());
+        await FlutterVolumeController.setVolume(data.volume?.toDouble() ?? 0);
         await SoundMode.setSoundMode(RingerModeStatus.normal);
       }
   }

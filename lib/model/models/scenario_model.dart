@@ -1,7 +1,3 @@
-import 'package:hive_flutter/hive_flutter.dart';
-part 'scenario_model.g.dart';
-
-@HiveType(typeId: 1)
 class ScenarioModel {
   ScenarioModel(
       {required this.title,
@@ -13,36 +9,21 @@ class ScenarioModel {
       required this.volume,
       required this.isON});
 
-  @HiveField(0)
   String? title;
-
-  @HiveField(1)
-  int tag;
-
-  @HiveField(2)
-  String startTime;
-
-  @HiveField(3)
-  String endTime;
-
-  @HiveField(4)
-  List<String> repeat;
-
-  @HiveField(5)
-  String volumeMode;
-
-  @HiveField(6)
-  int volume;
-
-  @HiveField(7)
-  bool isON;
+  int? tag;
+  String? startTime;
+  String? endTime;
+  List<String>? repeat;
+  String? volumeMode;
+  int? volume;
+  bool? isON;
 
   factory ScenarioModel.fromJson(Map<String, dynamic> json) => ScenarioModel(
       title: json['title'],
       tag: json['tag'],
       startTime: json['start_date'],
       endTime: json['end_date'],
-      repeat: json['repeat'],
+      repeat: json['repeat']?.cast<String>(),
       volumeMode: json['volume_mode'],
       volume: json['volume'],
       isON: json['is_on']);

@@ -6,8 +6,6 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:volume_control/model/bindings.dart';
 import 'package:volume_control/model/notification_services.dart';
 import 'package:volume_control/view_model/dbcontroller.dart';
-import 'package:volume_control/model/models/current_system_settings.dart';
-import 'package:volume_control/model/models/scenario_model.dart';
 import 'package:volume_control/model/util/app_constants.dart';
 import 'package:volume_control/model/util/app_pages.dart';
 import 'package:volume_control/model/util/app_routes.dart';
@@ -19,8 +17,6 @@ void main() async {
   await AndroidAlarmManager.initialize();
   await NotificationServices.init();
   await Hive.initFlutter();
-  Hive.registerAdapter(ScenarioModelAdapter());
-  Hive.registerAdapter(CurrentSystemSettingsAdapter());
   await Hive.openBox(AppConstants.boxName);
 
   runApp(const MyApp());
