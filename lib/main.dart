@@ -14,12 +14,20 @@ import 'model/util/dimens.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await AndroidAlarmManager.initialize();
-  await NotificationServices.init();
-  await Hive.initFlutter();
-  await Hive.openBox(AppConstants.boxName);
-
+  await initServices();
   runApp(const MyApp());
+}
+
+Future<void> initServices() async {
+  logPrint('init services started...');
+  try {
+    await AndroidAlarmManager.initialize();
+    await NotificationServices.init();
+    await Hive.initFlutter();
+    await Hive.openBox(AppConstants.boxName);
+  } catch (e) {
+    print('init services: $e');
+  }
 }
 
 class MyApp extends StatelessWidget {
