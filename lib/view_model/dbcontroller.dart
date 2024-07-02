@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
@@ -94,11 +93,10 @@ class DBcontroller extends GetxController {
 
 @pragma('vm:entry-point')
 Future<bool> bgSchedular(int tag, DateTime startTime) =>
-    AndroidAlarmManager.periodic(
-      const Duration(minutes: 1),
+    AndroidAlarmManager.oneShotAt(
+      startTime,
       tag,
       bgTask,
-      startAt: startTime,
       exact: true,
       wakeup: true,
     );
@@ -111,8 +109,6 @@ Future<void> bgTask(int? tag) async {
   ScenarioModel? data = List<ScenarioModel>.from(
           list.map((json) => ScenarioModel.fromJson(jsonDecode(json))))
       .elementAt(tag ?? 0);
-
-  logPrint('bgTask data: ${data.toJson()}');
 
   double? currentVolume = await FlutterVolumeController.getVolume();
   RingerModeStatus currentVolMode = await SoundMode.ringerModeStatus;
@@ -146,19 +142,19 @@ Future<void> bgTask(int? tag) async {
   switch (data.volumeMode) {
     case AppConstants.volSilent:
       {
-        await FlutterVolumeController.setVolume(data.volume?.toDouble() ?? 0);
+        await FlutterVolumeController.setVolume(data.volume.toDouble());
         await SoundMode.setSoundMode(RingerModeStatus.silent);
       }
       break;
     case AppConstants.volViberate:
       {
-        await FlutterVolumeController.setVolume(data.volume?.toDouble() ?? 0);
+        await FlutterVolumeController.setVolume(data.volume.toDouble());
         await SoundMode.setSoundMode(RingerModeStatus.vibrate);
       }
       break;
     default:
       {
-        await FlutterVolumeController.setVolume(data.volume?.toDouble() ?? 0);
+        await FlutterVolumeController.setVolume(data.volume.toDouble());
         await SoundMode.setSoundMode(RingerModeStatus.normal);
       }
   }

@@ -4,26 +4,26 @@ class ScenarioModel {
       required this.tag,
       required this.startTime,
       required this.endTime,
-      required this.repeat,
+      this.repeat,
       required this.volumeMode,
-      required this.volume,
-      required this.isON});
+      this.volume = 0,
+      this.isON = false});
 
-  String? title;
-  int? tag;
-  String? startTime;
-  String? endTime;
-  List<String>? repeat;
-  String? volumeMode;
-  int? volume;
-  bool? isON;
+  final String? title;
+  final int tag;
+  final String startTime;
+  final String endTime;
+  final List<String>? repeat;
+  final String volumeMode;
+  final int volume;
+  bool isON;
 
   factory ScenarioModel.fromJson(Map<String, dynamic> json) => ScenarioModel(
       title: json['title'],
       tag: json['tag'],
-      startTime: json['start_date'],
-      endTime: json['end_date'],
-      repeat: json['repeat']?.cast<String>(),
+      startTime: json['start_time'],
+      endTime: json['end_time'],
+      repeat: (json['repeat'] as List).cast<String>(),
       volumeMode: json['volume_mode'],
       volume: json['volume'],
       isON: json['is_on']);

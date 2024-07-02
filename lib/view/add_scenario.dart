@@ -18,6 +18,7 @@ class AddScenario extends GetView<AddScenarioController> {
       appBar: AppBar(
         backgroundColor: scheme.primaryContainer,
         foregroundColor: scheme.onPrimaryContainer,
+        scrolledUnderElevation: 0,
         actions: [
           IconButton(
               onPressed: controller.updateList != null
@@ -120,202 +121,208 @@ class AddScenario extends GetView<AddScenarioController> {
             Expanded(
                 flex: 5,
                 child: Container(
-                  padding: const EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.all(Dimens.marginMedium),
                   decoration: BoxDecoration(
                       color: scheme.surface,
                       borderRadius: const BorderRadius.vertical(
                           top: Radius.circular(Dimens.borderRadiusLarge))),
-                  child: ListView(
-                      padding: const EdgeInsets.all(Dimens.marginMedium),
+                  child: ListView(children: [
+                    const SizedBox(height: Dimens.marginDefault),
+                    const Text(
+                      AppConstants.repeat,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: Dimens.fontLarge),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          AppConstants.repeat,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: Dimens.fontLarge),
+                        Obx(
+                          () => Padding(
+                            padding: const EdgeInsets.all(Dimens.marginDefault),
+                            child: Text(Get.find<DBcontroller>()
+                                .repeatDaysText(controller.repeatDays)),
+                          ),
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Obx(
-                              () => Padding(
-                                padding:
-                                    const EdgeInsets.all(Dimens.marginDefault),
-                                child: Text(Get.find<DBcontroller>()
-                                    .repeatDaysText(controller.repeatDays)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: Dimens.paddingDefault,
+                          ),
+                          child: Center(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Obx(
+                                () => ToggleButtons(
+                                    fillColor: scheme.onPrimaryContainer,
+                                    selectedColor: scheme.primaryContainer,
+                                    renderBorder: false,
+                                    borderRadius: BorderRadius.circular(
+                                        Dimens.borderRadiusDefault),
+                                    onPressed: (index) {
+                                      controller.daySelected[index] =
+                                          !controller.daySelected[index];
+                                      if (controller.daySelected[index]) {
+                                        controller.dayList[index].selected =
+                                            true;
+                                      } else {
+                                        controller.dayList[index].selected =
+                                            false;
+                                      }
+                                      controller.repeatDays.value =
+                                          controller.daysRepeat();
+                                    },
+                                    isSelected: controller.daySelected,
+                                    children: controller.days),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: Dimens.paddingDefault,
-                              ),
-                              child: Center(
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Obx(
-                                    () => ToggleButtons(
-                                        fillColor: scheme.onPrimaryContainer,
-                                        selectedColor: scheme.primaryContainer,
-                                        renderBorder: false,
-                                        borderRadius: BorderRadius.circular(
-                                            Dimens.borderRadiusDefault),
-                                        onPressed: (index) {
-                                          controller.daySelected[index] =
-                                              !controller.daySelected[index];
-                                          if (controller.daySelected[index]) {
-                                            controller.dayList[index].selected =
-                                                true;
-                                          } else {
-                                            controller.dayList[index].selected =
-                                                false;
-                                          }
-                                          controller.repeatDays.value =
-                                              controller.daysRepeat();
-                                        },
-                                        isSelected: controller.daySelected,
-                                        children: controller.days),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: Dimens.paddingMedium,
-                          ),
-                          child: TextFormField(
-                            controller: controller.titleController.value,
-                            decoration: InputDecoration(
-                                labelStyle: TextStyle(color: scheme.onSurface),
-                                labelText: AppConstants.sceName,
-                                border: const OutlineInputBorder(),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: scheme.onPrimaryContainer))),
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: Dimens.paddingDefault),
-                          child: Text(AppConstants.volMode,
-                              style: TextStyle(
-                                  fontSize: Dimens.fontLarge,
-                                  fontWeight: FontWeight.w600)),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: Dimens.paddingMedium),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Obx(
-                                () => RadioMenuButton(
-                                    style: ButtonStyle(
-                                        padding: const MaterialStatePropertyAll(
-                                            EdgeInsets.symmetric(
-                                                horizontal:
-                                                    Dimens.marginMedium)),
-                                        shape: MaterialStatePropertyAll(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(Dimens
-                                                        .borderRadiusMediumExtra)))),
-                                    value: AppConstants.volNormal,
-                                    groupValue: controller.volumeMode.value,
-                                    onChanged: (value) {
-                                      controller.volumeMode.value = value!;
-                                    },
-                                    child: const Text(AppConstants.volNormal)),
-                              ),
-                              Obx(
-                                () => RadioMenuButton(
-                                    style: ButtonStyle(
-                                        padding: const MaterialStatePropertyAll(
-                                            EdgeInsets.symmetric(
-                                                horizontal:
-                                                    Dimens.marginMedium)),
-                                        shape: MaterialStatePropertyAll(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(Dimens
-                                                        .borderRadiusMediumExtra)))),
-                                    value: AppConstants.volViberate,
-                                    groupValue: controller.volumeMode.value,
-                                    onChanged: (value) {
-                                      controller.volumeMode.value = value!;
-                                      controller.volume.value = 0;
-                                    },
-                                    child:
-                                        const Text(AppConstants.volViberate)),
-                              ),
-                              Obx(
-                                () => RadioMenuButton(
-                                    style: ButtonStyle(
-                                        padding: const MaterialStatePropertyAll(
-                                            EdgeInsets.symmetric(
-                                                horizontal:
-                                                    Dimens.marginMedium)),
-                                        shape: MaterialStatePropertyAll(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(Dimens
-                                                        .borderRadiusMediumExtra)))),
-                                    value: AppConstants.volSilent,
-                                    groupValue: controller.volumeMode.value,
-                                    onChanged: (value) {
-                                      controller.volumeMode.value = value!;
-                                      controller.volume.value = 0;
-                                    },
-                                    child: const Text(AppConstants.volSilent)),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: Dimens.paddingDefault),
-                          child: Text(AppConstants.vol,
-                              style: TextStyle(
-                                  fontSize: Dimens.fontLarge,
-                                  fontWeight: FontWeight.w600)),
-                        ),
-                        Obx(
-                          () => Row(
-                            children: [
-                              Expanded(
-                                  child: Slider(
-                                      thumbColor: scheme.onPrimaryContainer,
-                                      activeColor: scheme.onPrimaryContainer,
-                                      value: controller.volume.value,
-                                      onChanged: (value) {
-                                        controller.volume.value = value;
-                                        controller.volumeMode.value =
-                                            AppConstants.volNormal;
-                                      })),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.all(Dimens.paddingDefault),
-                                child: Text(
-                                  '${(controller.volume.value * 100).ceil()}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              )
-                            ],
                           ),
                         )
-                      ]),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: Dimens.paddingMedium,
+                      ),
+                      child: TextFormField(
+                        controller: controller.titleController.value,
+                        decoration: InputDecoration(
+                            labelStyle: TextStyle(color: scheme.onSurface),
+                            labelText: AppConstants.sceName,
+                            border: const OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: scheme.onPrimaryContainer))),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(top: Dimens.paddingDefault),
+                      child: Text(AppConstants.volMode,
+                          style: TextStyle(
+                              fontSize: Dimens.fontLarge,
+                              fontWeight: FontWeight.w600)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: Dimens.paddingMedium),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Obx(
+                            () => RadioMenuButton(
+                                style: ButtonStyle(
+                                    padding: const MaterialStatePropertyAll(
+                                        EdgeInsets.symmetric(
+                                            horizontal: Dimens.marginMedium)),
+                                    shape: MaterialStatePropertyAll(
+                                        RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                Dimens
+                                                    .borderRadiusMediumExtra)))),
+                                value: AppConstants.volNormal,
+                                groupValue: controller.volumeMode.value,
+                                onChanged: (value) {
+                                  controller.volumeMode.value = value!;
+                                },
+                                child: const Text(AppConstants.volNormal)),
+                          ),
+                          Obx(
+                            () => RadioMenuButton(
+                                style: ButtonStyle(
+                                    padding: const MaterialStatePropertyAll(
+                                        EdgeInsets.symmetric(
+                                            horizontal: Dimens.marginMedium)),
+                                    shape: MaterialStatePropertyAll(
+                                        RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                Dimens
+                                                    .borderRadiusMediumExtra)))),
+                                value: AppConstants.volViberate,
+                                groupValue: controller.volumeMode.value,
+                                onChanged: (value) {
+                                  controller.volumeMode.value = value!;
+                                  controller.volume.value = 0;
+                                },
+                                child: const Text(AppConstants.volViberate)),
+                          ),
+                          Obx(
+                            () => RadioMenuButton(
+                                style: ButtonStyle(
+                                    padding: const MaterialStatePropertyAll(
+                                        EdgeInsets.symmetric(
+                                            horizontal: Dimens.marginMedium)),
+                                    shape: MaterialStatePropertyAll(
+                                        RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                Dimens
+                                                    .borderRadiusMediumExtra)))),
+                                value: AppConstants.volSilent,
+                                groupValue: controller.volumeMode.value,
+                                onChanged: (value) {
+                                  controller.volumeMode.value = value!;
+                                  controller.volume.value = 0;
+                                },
+                                child: const Text(AppConstants.volSilent)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(top: Dimens.paddingDefault),
+                      child: Text(AppConstants.vol,
+                          style: TextStyle(
+                              fontSize: Dimens.fontLarge,
+                              fontWeight: FontWeight.w600)),
+                    ),
+                    const SizedBox(height: Dimens.marginMedium),
+                    Obx(
+                      () => CheckboxListTile(
+                          controlAffinity: ListTileControlAffinity.leading,
+                          value: controller.changeVolume.value,
+                          title: const Text(AppConstants.changeVol),
+                          onChanged: (value) {
+                            controller.changeVolume.value = value ?? false;
+                          }),
+                    ),
+                    const SizedBox(height: Dimens.marginMedium),
+                    Obx(
+                      () => Row(
+                        children: [
+                          Expanded(
+                              child: Slider(
+                                  thumbColor: scheme.onPrimaryContainer,
+                                  activeColor: scheme.onPrimaryContainer,
+                                  value: controller.volume.value,
+                                  onChanged: controller.changeVolume.value
+                                      ? (value) {
+                                          controller.volume.value = value;
+                                          controller.volumeMode.value =
+                                              AppConstants.volNormal;
+                                        }
+                                      : null)),
+                          Padding(
+                            padding:
+                                const EdgeInsets.all(Dimens.paddingDefault),
+                            child: Text(
+                              '${(controller.volume.value * 100).ceil()}',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ]),
                 )),
           ],
         ),
       ),
-      bottomNavigationBar: ColoredBox(
+      bottomNavigationBar: Container(
         color: scheme.surface,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: Dimens.marginMedium),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              TextButton(
+        padding: const EdgeInsets.only(bottom: Dimens.marginDefault),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextButton(
                   style: TextButton.styleFrom(
                       foregroundColor: scheme.onPrimaryContainer,
                       padding: const EdgeInsets.symmetric(
@@ -324,7 +331,10 @@ class AddScenario extends GetView<AddScenarioController> {
                       )),
                   onPressed: () => Navigator.pop(context),
                   child: const Text(AppConstants.cancel)),
-              TextButton(
+            ),
+            const SizedBox(height: Dimens.marginDefault),
+            Expanded(
+              child: TextButton(
                   style: TextButton.styleFrom(
                       foregroundColor: scheme.onPrimaryContainer,
                       padding: const EdgeInsets.symmetric(
@@ -341,9 +351,9 @@ class AddScenario extends GetView<AddScenarioController> {
                       Get.rawSnackbar(message: 'Set time first');
                     }
                   },
-                  child: const Text(AppConstants.save))
-            ],
-          ),
+                  child: const Text(AppConstants.save)),
+            )
+          ],
         ),
       ),
     );

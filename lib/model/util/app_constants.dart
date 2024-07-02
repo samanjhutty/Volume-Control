@@ -44,6 +44,7 @@ class AppConstants {
   static const String save = 'Save';
   static const String cancel = 'Cancel';
   static const String settings = 'Settings';
+  static const String changeVol = 'Modify Volume Settings';
 
   static String toIcons(String icon) => 'assets/icons/$icon.png';
 }

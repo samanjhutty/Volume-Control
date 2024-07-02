@@ -18,7 +18,7 @@ void main() async {
   runApp(const MyApp());
 }
 
-Future<void> initServices() async {
+Future initServices() async {
   logPrint('init services started...');
   try {
     await AndroidAlarmManager.initialize();

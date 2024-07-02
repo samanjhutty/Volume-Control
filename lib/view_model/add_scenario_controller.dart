@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:volume_control/view_model/dbcontroller.dart';
@@ -21,6 +22,7 @@ class AddScenarioController extends GetxController {
   RxString volumeMode = AppConstants.volNormal.obs;
   RxDouble volume = RxDouble(0);
   int? updateList;
+  RxBool changeVolume = false.obs;
 
   RxList<ScenarioDay> dayList = [
     ScenarioDay(day: 'Mon', selected: false),
@@ -40,6 +42,8 @@ class AddScenarioController extends GetxController {
       updateList = Get.arguments;
       _onEdit(updateList!);
     }
+    _getCurrentVolume();
+
     super.onInit();
   }
 
@@ -51,19 +55,23 @@ class AddScenarioController extends GetxController {
     super.onClose();
   }
 
+  _getCurrentVolume() async {
+    double? vol = await FlutterVolumeController.getVolume();
+
+    volume.value = (vol ?? 0) * 100;
+  }
+
   /// load values from list item to edit page
   _onEdit(int index) {
     ScenarioModel data = dBcontroller.scenarioList[index];
     logPrint('model data: onEdit ${data.toJson()}');
 
-    startTime.value =
-        data.startTime?.toTimeOfDay ?? const TimeOfDay(hour: 0, minute: 0);
-    endTime.value =
-        data.endTime?.toTimeOfDay ?? const TimeOfDay(hour: 0, minute: 0);
+    startTime.value = data.startTime.toTimeOfDay;
+    endTime.value = data.endTime.toTimeOfDay;
     repeatDays.value = data.repeat ?? [];
     titleController.value.text = data.title ?? '';
-    volumeMode.value = data.volumeMode ?? '';
-    volume.value = (data.volume ?? 0) / 100;
+    volumeMode.value = data.volumeMode;
+    volume.value = (data.volume) / 100;
 
     _toggleButtons();
   }
