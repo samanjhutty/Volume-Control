@@ -32,6 +32,7 @@ class DBcontroller extends GetxController {
     super.onInit();
   }
 
+  /// load the box list to model list.
   List<ScenarioModel> _getBoxList() {
     List list = [];
     list = box.get(AppConstants.scenarioList, defaultValue: []);
@@ -40,6 +41,7 @@ class DBcontroller extends GetxController {
         list.map((json) => ScenarioModel.fromJson(jsonDecode(json))));
   }
 
+  /// checks required permissions.
   checkPermissions() async {
     for (var element in permissions) {
       if (!await element.isGranted) {
@@ -67,6 +69,7 @@ class DBcontroller extends GetxController {
             ],
           ));
 
+  /// get string of selected days, dynamically
   String repeatDaysText(List days) {
     switch (days.length) {
       case 0:
@@ -78,48 +81,95 @@ class DBcontroller extends GetxController {
     }
   }
 
+  /// save the list of model to json format in box.
   Future<void> saveList(List<ScenarioModel> list) async {
     await box.put(AppConstants.scenarioList,
         list.map((e) => jsonEncode(e.toJson())).toList());
   }
-
-  /// Converts TimeOfDay to DateTime
-  DateTime dateTimeFromTimeOfDay(TimeOfDay time) {
-    DateTime now = DateTime.now();
-
-    return DateTime(now.year, now.month, now.day, time.hour, time.minute);
-  }
 }
 
-Future<void> bgSchedular(int tag, DateTime startTime, DateTime endTime) async {
-  /// in case tag is 0, will create same id for both tasks,
-  /// i.e. startSchedule id: 0,endSchedule id: 00
-  int id = tag + 1;
-
-  await AndroidAlarmManager.oneShotAt(startTime, id, startSchedule,
-      exact: true,
-      wakeup: true,
-      rescheduleOnReboot: true,
-      params: {'index': tag});
-
-  await AndroidAlarmManager.oneShotAt(
-      endTime, int.parse('$id$tag'), endSchedule,
-      exact: true,
-      wakeup: true,
-      rescheduleOnReboot: true,
-      params: {'index': tag});
+/// callback function to create background task.
+Future<void> createScenario(
+    {required int tag,
+    required DateTime startTime,
+    required DateTime endTime}) async {
+  DateTime startAt = startTime.subtract(const Duration(minutes: 5));
+  DateTime now = DateTime.now();
+  if (startAt.isBefore(now) && endTime.isAfter(now)) {
+    startAt = now.add(const Duration(minutes: 1));
+  }
+  logPrint(
+      'am:: createScenario:: tag: $tag, startAt: $startAt, ranAt:${DateTime.now()}');
+  AndroidAlarmManager.periodic(
+    const Duration(days: 1),
+    tag,
+    bgSchedular,
+    startAt: startAt,
+    exact: true,
+    wakeup: true,
+    rescheduleOnReboot: true,
+    params: {
+      'start_time': startTime.toString(),
+      'end_time': endTime.toString(),
+    },
+  );
 }
 
 @pragma('vm:entry-point')
-Future<void> startSchedule(int tag, Map<String, dynamic> map) async {
-  int index = map['index'];
+Future<void> bgSchedular(int tag, Map<String, dynamic> params) async {
+  /// in case tag is 0, will create same id for both tasks,
+  /// i.e. startSchedule id: 0,endSchedule id: 00
+  int id = int.parse('${tag + 1}${tag + 1}');
 
+  // get data from function params.
+  DateTime startTime = DateTime.parse(params['start_time']);
+  DateTime endTime = DateTime.parse(params['end_time']);
+
+  // init Hive to load and read box contents.
   await Hive.initFlutter();
   var box = await Hive.openBox(AppConstants.boxName);
-  List list = box.get(AppConstants.scenarioList);
-  ScenarioModel? data = List<ScenarioModel>.from(
-          list.map((json) => ScenarioModel.fromJson(jsonDecode(json))))
-      .elementAt(index);
+
+  // fetch scenario list.
+  List scenarioList = box.get(AppConstants.scenarioList);
+  List<ScenarioModel>? modelList = List<ScenarioModel>.from(
+      scenarioList.map((json) => ScenarioModel.fromJson(jsonDecode(json))));
+  var scenarioModel = modelList.elementAt(tag);
+  // fetch volume settings.
+  String? systemSettings = box.get(AppConstants.systemSettings(tag));
+
+  // get current day
+  int dayofWeek = DateTime.now().weekday;
+  String today = AppConstants.dayList[dayofWeek - 1];
+
+  logPrint(
+      'am:: bgSchedular:: id: $id, tag: $tag, today: $today, startDate: ${startTime.toString()}, ranAt:${DateTime.now()}');
+  if (scenarioModel.repeat?.contains(today) ?? false) {
+    // schedule scenario
+    await AndroidAlarmManager.oneShotAt(startTime, id, startSchedule,
+        exact: true,
+        wakeup: true,
+        rescheduleOnReboot: true,
+        params: {
+          'scenario_model': jsonEncode(scenarioModel.toJson()),
+        });
+    int endId = int.parse('$id$tag');
+    // end scenario
+    await AndroidAlarmManager.oneShotAt(endTime, endId, endSchedule,
+        exact: true,
+        wakeup: true,
+        rescheduleOnReboot: true,
+        params: {
+          'system_settings': systemSettings,
+          // 'scenario_list': scenarioList,
+          // 'box': box,
+        });
+  }
+}
+
+@pragma('vm:entry-point')
+Future<void> startSchedule(int tag, Map<String, dynamic> json) async {
+  String modelJson = json['scenario_model'];
+  ScenarioModel data = ScenarioModel.fromJson(jsonDecode(modelJson));
 
   if (data.changeVol) {
     await FlutterVolumeController.setVolume(data.volume.toDouble());
@@ -143,12 +193,15 @@ Future<void> startSchedule(int tag, Map<String, dynamic> map) async {
 }
 
 @pragma('vm:entry-point')
-Future<void> endSchedule(int tag, Map<String, dynamic> map) async {
-  await Hive.initFlutter();
-  var box = await Hive.openBox(AppConstants.boxName);
-  String? json = await box.get(AppConstants.systemSettings);
+Future<void> endSchedule(int tag, Map<String, dynamic> json) async {
+  String settingsJson = json['system_settings'];
+  // List scenarioList = json['scenario_list'];
+
   CurrentSystemSettings? data =
-      CurrentSystemSettings.fromJson(jsonDecode(json ?? ''));
+      CurrentSystemSettings.fromJson(jsonDecode(settingsJson));
+  // List<ScenarioModel> modelList = List<ScenarioModel>.from(
+  //     scenarioList.map((json) => ScenarioModel.fromJson(jsonDecode(json))));
+  // var scenario = modelList.elementAt(tag);
 
   if (data.changeVol) {
     await FlutterVolumeController.setVolume(data.volume.toDouble());
@@ -166,11 +219,7 @@ Future<void> endSchedule(int tag, Map<String, dynamic> map) async {
   NotificationServices.showNotification(
       id: int.parse('$tag'), title: '${data.title ?? 'Scenario'} ended');
 
-  int index = map['index'];
-  List list = box.get(AppConstants.scenarioList);
-  List<ScenarioModel>? modelList = List<ScenarioModel>.from(
-      list.map((json) => ScenarioModel.fromJson(jsonDecode(json))));
-  modelList.elementAt(index).isON = false;
-  await box.put(AppConstants.scenarioList,
-      modelList.map((e) => jsonEncode(e.toJson())).toList());
+  // scenario.isON = false;
+  // await box.put(AppConstants.scenarioList,
+  //     modelList.map((e) => jsonEncode(e.toJson())).toList());
 }

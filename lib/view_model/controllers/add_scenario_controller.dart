@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'package:get/get.dart';
@@ -17,8 +16,7 @@ Box box = Hive.box(AppConstants.boxName);
 class AddScenarioController extends GetxController {
   DBcontroller dBcontroller = Get.find();
 
-  Rx<TextEditingController> titleController =
-      TextEditingController(text: '').obs;
+  TextEditingController titleController = TextEditingController();
   Rx<TimeOfDay> startTime = const TimeOfDay(hour: 0, minute: 0).obs;
   Rx<TimeOfDay> endTime = const TimeOfDay(hour: 0, minute: 0).obs;
   RxList<bool> daySelected = <bool>[].obs;
@@ -29,15 +27,12 @@ class AddScenarioController extends GetxController {
   int? updateList;
   RxBool changeVolume = false.obs;
 
-  RxList<ScenarioDay> dayList = [
-    ScenarioDay(day: 'Mon', selected: false),
-    ScenarioDay(day: 'Tue', selected: false),
-    ScenarioDay(day: 'Wed', selected: false),
-    ScenarioDay(day: 'Thu', selected: false),
-    ScenarioDay(day: 'Fri', selected: false),
-    ScenarioDay(day: 'Sat', selected: false),
-    ScenarioDay(day: 'Sun', selected: false),
-  ].obs;
+  RxList<ScenarioDay> dayList = List.generate(
+      AppConstants.dayList.length,
+      (index) => ScenarioDay(
+            day: AppConstants.dayList[index],
+            selected: false,
+          )).obs;
 
   @override
   void onInit() {
@@ -86,7 +81,7 @@ class AddScenarioController extends GetxController {
     startTime.value = data.startTime.toTimeOfDay;
     endTime.value = data.endTime.toTimeOfDay;
     repeatDays.value = data.repeat ?? [];
-    titleController.value.text = data.title ?? '';
+    titleController.text = data.title ?? '';
     volumeMode.value = data.volumeMode;
     volume.value = data.volume;
 
@@ -144,25 +139,24 @@ class AddScenarioController extends GetxController {
     return list;
   }
 
-  _saveCurrentSettings() async {
+  _saveCurrentSettings({required int index}) async {
     double? currentVolume = await FlutterVolumeController.getVolume();
     RingerModeStatus currentVolMode = await SoundMode.ringerModeStatus;
     var data = CurrentSystemSettings(
         volume: currentVolume ?? 1,
         changeVol: changeVolume.value,
         volumeMode: currentVolMode.name,
-        title: titleController.value.text);
+        title: titleController.text.isEmpty ? null : titleController.text);
 
-    await box.put(AppConstants.systemSettings, jsonEncode(data.toJson()));
+    await box.put(
+        AppConstants.systemSettings(index), jsonEncode(data.toJson()));
   }
 
   /// Adds a new Scenario To scenarioList.
   addScenario() {
     int tag = updateList ?? dBcontroller.scenarioList.length;
     ScenarioModel data = ScenarioModel(
-        title: titleController.value.text.isEmpty
-            ? null
-            : titleController.value.text,
+        title: titleController.text.isEmpty ? null : titleController.text,
         tag: tag,
         startTime: startTime.value.formatTime24H,
         endTime: endTime.value.formatTime24H,
@@ -182,14 +176,14 @@ class AddScenarioController extends GetxController {
     dBcontroller.saveList(dBcontroller.scenarioList);
 
     /// save current settings
-    _saveCurrentSettings();
+    _saveCurrentSettings(index: tag);
 
     /// schedule task
     if (repeatDays.isNotEmpty) {
-      bgSchedular(
-        tag,
-        Get.find<DBcontroller>().dateTimeFromTimeOfDay(startTime.value),
-        Get.find<DBcontroller>().dateTimeFromTimeOfDay(endTime.value),
+      createScenario(
+        tag: tag,
+        startTime: startTime.value.toDateTime,
+        endTime: endTime.value.toDateTime,
       );
     }
   }

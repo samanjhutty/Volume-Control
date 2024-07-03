@@ -184,7 +184,7 @@ class AddScenario extends GetView<AddScenarioController> {
                         vertical: Dimens.paddingMedium,
                       ),
                       child: TextFormField(
-                        controller: controller.titleController.value,
+                        controller: controller.titleController,
                         decoration: InputDecoration(
                             labelStyle: TextStyle(color: scheme.onSurface),
                             labelText: AppConstants.sceName,

@@ -12,7 +12,7 @@ class AppConstants {
   /// Hive constants
   static const String boxName = 'volume-conrtol';
   static const String scenarioList = 'scenarioList';
-  static const String systemSettings = 'system-settings';
+  static String systemSettings(int index) => 'system-settings:$index';
   static const String is24hr = '24hr-format';
 
   /// notification constants
@@ -36,6 +36,15 @@ class AppConstants {
   static const String repeat = 'Repeat';
   static const String everyday = 'Everyday';
   static const String dayNever = 'Never';
+  static const List<String> dayList = [
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+    'Sun',
+  ];
 
   /// page specific constants
   static const String noScenarioText = 'No Scenario running';

@@ -51,86 +51,85 @@ class ScenarioList extends GetView<DBcontroller> {
                       color: scheme.secondaryContainer,
                       elevation: Dimens.sizeExtraSmall,
                       margin: const EdgeInsets.all(Dimens.marginDefault),
-                      child: Padding(
-                        padding: const EdgeInsets.all(Dimens.marginMedium),
-                        child: InkWell(
-                          onTap: () => Get.toNamed(AppRoutes.addScenario,
-                              arguments: index),
-                          child: IntrinsicHeight(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      controller
-                                          .repeatDaysText(list.repeat ?? []),
-                                      style: TextStyle(
-                                          color: textColor,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    const SizedBox(
-                                        height: Dimens.marginDefault),
-                                    DefaultTextStyle(
-                                      style: TextStyle(
-                                          color: textColor,
-                                          fontSize: Dimens.fontExtraLarge,
-                                          fontWeight: FontWeight.bold),
-                                      child: Obx(
-                                        () => Row(
-                                          children: [
-                                            Text(
-                                              controller.is24hrFormat.value
-                                                  ? list.startTime.toTimeOfDay
-                                                      .formatTime24H
-                                                  : list.startTime.toTimeOfDay
-                                                      .format(context),
-                                            ),
-                                            const Text(' - '),
-                                            Text(
-                                              controller.is24hrFormat.value
-                                                  ? list.endTime.toTimeOfDay
-                                                      .formatTime24H
-                                                  : list.endTime.toTimeOfDay
-                                                      .format(context),
-                                            ),
-                                          ],
-                                        ),
+                      child: InkWell(
+                        onTap: () => Get.toNamed(AppRoutes.addScenario,
+                            arguments: index),
+                        borderRadius: const BorderRadius.all(
+                            Radius.circular(Dimens.borderRadiusDefault)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(Dimens.marginMedium),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    controller
+                                        .repeatDaysText(list.repeat ?? []),
+                                    style: TextStyle(
+                                        color: textColor,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  const SizedBox(height: Dimens.marginDefault),
+                                  DefaultTextStyle(
+                                    style: TextStyle(
+                                        color: textColor,
+                                        fontSize: Dimens.fontExtraLarge,
+                                        fontWeight: FontWeight.bold),
+                                    child: Obx(
+                                      () => Row(
+                                        children: [
+                                          Text(
+                                            controller.is24hrFormat.value
+                                                ? list.startTime.toTimeOfDay
+                                                    .formatTime24H
+                                                : list.startTime.toTimeOfDay
+                                                    .format(context),
+                                          ),
+                                          const Text(' - '),
+                                          Text(
+                                            controller.is24hrFormat.value
+                                                ? list.endTime.toTimeOfDay
+                                                    .formatTime24H
+                                                : list.endTime.toTimeOfDay
+                                                    .format(context),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    if (list.title != null)
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: Dimens.marginDefault),
-                                        child: Text(
-                                          list.title ?? '',
-                                          style: TextStyle(
-                                              color: textColor,
-                                              fontWeight: FontWeight.w500),
-                                        ),
+                                  ),
+                                  if (list.title != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: Dimens.marginDefault),
+                                      child: Text(
+                                        list.title ?? '',
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontWeight: FontWeight.w500),
                                       ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Image.asset(
-                                        AppConstants.toIcons(
-                                            list.volumeMode.toLowerCase()),
-                                        height: Dimens.sizeDefault,
-                                        fit: BoxFit.cover,
-                                        color: textColor),
-                                    const SizedBox(width: Dimens.marginDefault),
-                                    _Switch(index: index)
-                                  ],
-                                ),
-                              ],
-                            ),
+                                    ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Image.asset(
+                                      AppConstants.toIcons(
+                                          list.volumeMode.toLowerCase()),
+                                      height: Dimens.sizeDefault,
+                                      fit: BoxFit.cover,
+                                      color: textColor),
+                                  const SizedBox(width: Dimens.marginDefault),
+                                  _Switch(index: index)
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -165,10 +164,10 @@ class _SwitchState extends State<_Switch> {
         });
         if (value) {
           logPrint('time of day: ${data.startTime}');
-          bgSchedular(
-            data.tag,
-            controller.dateTimeFromTimeOfDay(data.startTime.toTimeOfDay),
-            controller.dateTimeFromTimeOfDay(data.endTime.toTimeOfDay),
+          createScenario(
+            tag: data.tag,
+            startTime: data.startTime.toDateTime,
+            endTime: data.endTime.toDateTime,
           );
         } else {
           AndroidAlarmManager.cancel(data.tag);

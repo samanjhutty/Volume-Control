@@ -18,6 +18,7 @@ void main() async {
   runApp(const MyApp());
 }
 
+/// init services required for app to function properly.
 Future initServices() async {
   logPrint('init services started...');
   try {
@@ -86,14 +87,11 @@ class MainPage extends StatelessWidget {
     ColorScheme scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-          title: Obx(() {
-            Get.find<DBcontroller>().scenarioList.length;
-            return Text(AppConstants.noScenarioText,
-                style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: Dimens.fontExtraLarge,
-                    color: scheme.onPrimaryContainer));
-          }),
+          title: Text(AppConstants.noScenarioText,
+              style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: Dimens.fontExtraLarge,
+                  color: scheme.onPrimaryContainer)),
           actions: [
             Obx(
               () => IconButton(
