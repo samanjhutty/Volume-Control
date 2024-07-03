@@ -8,9 +8,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:sound_mode/sound_mode.dart';
 import 'package:sound_mode/utils/ringer_mode_statuses.dart';
 import 'package:volume_control/model/models/scenario_model.dart';
-import 'package:volume_control/model/notification_services.dart';
-import '../model/models/current_system_settings.dart';
-import '../model/util/app_constants.dart';
+import 'package:volume_control/services/notification_services.dart';
+import '../../model/models/current_system_settings.dart';
+import '../../model/util/app_constants.dart';
 
 class DBcontroller extends GetxController {
   RxList<ScenarioModel> scenarioList = <ScenarioModel>[].obs;
@@ -21,7 +21,7 @@ class DBcontroller extends GetxController {
     Permission.scheduleExactAlarm,
     Permission.notification,
     Permission.ignoreBatteryOptimizations,
-    Permission.accessNotificationPolicy,
+    Permission.accessNotificationPolicy
   ];
   @override
   onInit() {
@@ -91,71 +91,86 @@ class DBcontroller extends GetxController {
   }
 }
 
-@pragma('vm:entry-point')
-Future<bool> bgSchedular(int tag, DateTime startTime) =>
-    AndroidAlarmManager.oneShotAt(
-      startTime,
-      tag,
-      bgTask,
+Future<void> bgSchedular(int tag, DateTime startTime, DateTime endTime) async {
+  /// in case tag is 0, will create same id for both tasks,
+  /// i.e. startSchedule id: 0,endSchedule id: 00
+  int id = tag + 1;
+
+  await AndroidAlarmManager.oneShotAt(startTime, id, startSchedule,
       exact: true,
       wakeup: true,
-    );
+      rescheduleOnReboot: true,
+      params: {'index': tag});
 
-Future<void> bgTask(int? tag) async {
-  logPrint('task running...');
+  await AndroidAlarmManager.oneShotAt(
+      endTime, int.parse('$id$tag'), endSchedule,
+      exact: true,
+      wakeup: true,
+      rescheduleOnReboot: true,
+      params: {'index': tag});
+}
+
+@pragma('vm:entry-point')
+Future<void> startSchedule(int tag, Map<String, dynamic> map) async {
+  int index = map['index'];
+
   await Hive.initFlutter();
   var box = await Hive.openBox(AppConstants.boxName);
   List list = box.get(AppConstants.scenarioList);
   ScenarioModel? data = List<ScenarioModel>.from(
           list.map((json) => ScenarioModel.fromJson(jsonDecode(json))))
-      .elementAt(tag ?? 0);
+      .elementAt(index);
 
-  double? currentVolume = await FlutterVolumeController.getVolume();
-  RingerModeStatus currentVolMode = await SoundMode.ringerModeStatus;
-  String? volMode;
-  switch (currentVolMode) {
-    case RingerModeStatus.silent:
-      volMode = AppConstants.volSilent;
-      break;
-    case RingerModeStatus.vibrate:
-      volMode = AppConstants.volViberate;
-      break;
-    default:
-      volMode = AppConstants.volNormal;
-      break;
+  if (data.changeVol) {
+    await FlutterVolumeController.setVolume(data.volume.toDouble());
   }
 
-  await box.put(
-      AppConstants.systemSettings,
-      jsonEncode(CurrentSystemSettings(
-              volume: currentVolume?.toInt(), volMode: volMode)
-          .toJson()));
-
-  logPrint(
-      'bgTask currentSettings: ${CurrentSystemSettings(volume: currentVolume?.toInt(), volMode: volMode).toJson()}');
-
-  NotificationServices.showNotification(
-      id: tag ?? 0,
-      title: '${data.title ?? 'Scenario'} runnung',
-      body: 'you current routine will end at ${data.endTime}',
-      payload: '');
   switch (data.volumeMode) {
     case AppConstants.volSilent:
-      {
-        await FlutterVolumeController.setVolume(data.volume.toDouble());
-        await SoundMode.setSoundMode(RingerModeStatus.silent);
-      }
+      await SoundMode.setSoundMode(RingerModeStatus.silent);
       break;
     case AppConstants.volViberate:
-      {
-        await FlutterVolumeController.setVolume(data.volume.toDouble());
-        await SoundMode.setSoundMode(RingerModeStatus.vibrate);
-      }
+      await SoundMode.setSoundMode(RingerModeStatus.vibrate);
       break;
     default:
-      {
-        await FlutterVolumeController.setVolume(data.volume.toDouble());
-        await SoundMode.setSoundMode(RingerModeStatus.normal);
-      }
+      await SoundMode.setSoundMode(RingerModeStatus.normal);
   }
+
+  NotificationServices.showNotification(
+      id: tag,
+      title: '${data.title ?? 'Scenario'} Running',
+      body: 'you current routine will end at ${data.endTime}');
+}
+
+@pragma('vm:entry-point')
+Future<void> endSchedule(int tag, Map<String, dynamic> map) async {
+  await Hive.initFlutter();
+  var box = await Hive.openBox(AppConstants.boxName);
+  String? json = await box.get(AppConstants.systemSettings);
+  CurrentSystemSettings? data =
+      CurrentSystemSettings.fromJson(jsonDecode(json ?? ''));
+
+  if (data.changeVol) {
+    await FlutterVolumeController.setVolume(data.volume.toDouble());
+  }
+  switch (data.volumeMode) {
+    case AppConstants.volSilent:
+      await SoundMode.setSoundMode(RingerModeStatus.silent);
+      break;
+    case AppConstants.volViberate:
+      await SoundMode.setSoundMode(RingerModeStatus.vibrate);
+      break;
+    default:
+      await SoundMode.setSoundMode(RingerModeStatus.normal);
+  }
+  NotificationServices.showNotification(
+      id: int.parse('$tag'), title: '${data.title ?? 'Scenario'} ended');
+
+  int index = map['index'];
+  List list = box.get(AppConstants.scenarioList);
+  List<ScenarioModel>? modelList = List<ScenarioModel>.from(
+      list.map((json) => ScenarioModel.fromJson(jsonDecode(json))));
+  modelList.elementAt(index).isON = false;
+  await box.put(AppConstants.scenarioList,
+      modelList.map((e) => jsonEncode(e.toJson())).toList());
 }

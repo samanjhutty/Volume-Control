@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
-import 'package:volume_control/model/bindings.dart';
+import 'package:volume_control/view_model/bindings.dart';
 import 'package:volume_control/main.dart';
-import 'package:volume_control/model/util/app_routes.dart';
+import 'package:volume_control/view_model/routes/app_routes.dart';
 import 'package:volume_control/view/add_scenario.dart';
 import 'package:volume_control/view/settings.dart';
 

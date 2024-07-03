@@ -1,8 +1,8 @@
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:volume_control/view_model/add_scenario_controller.dart';
-import 'package:volume_control/view_model/dbcontroller.dart';
+import 'package:volume_control/view_model/controllers/add_scenario_controller.dart';
+import 'package:volume_control/view_model/controllers/dbcontroller.dart';
 import 'package:volume_control/model/util/app_constants.dart';
 import 'package:volume_control/model/util/entension_methods.dart';
 import '../model/util/dimens.dart';
@@ -240,7 +240,6 @@ class AddScenario extends GetView<AddScenarioController> {
                                 groupValue: controller.volumeMode.value,
                                 onChanged: (value) {
                                   controller.volumeMode.value = value!;
-                                  controller.volume.value = 0;
                                 },
                                 child: const Text(AppConstants.volViberate)),
                           ),
@@ -259,7 +258,6 @@ class AddScenario extends GetView<AddScenarioController> {
                                 groupValue: controller.volumeMode.value,
                                 onChanged: (value) {
                                   controller.volumeMode.value = value!;
-                                  controller.volume.value = 0;
                                 },
                                 child: const Text(AppConstants.volSilent)),
                           ),
@@ -295,8 +293,6 @@ class AddScenario extends GetView<AddScenarioController> {
                                   onChanged: controller.changeVolume.value
                                       ? (value) {
                                           controller.volume.value = value;
-                                          controller.volumeMode.value =
-                                              AppConstants.volNormal;
                                         }
                                       : null)),
                           Padding(

@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:volume_control/view_model/dbcontroller.dart';
+import 'package:sound_mode/sound_mode.dart';
+import 'package:sound_mode/utils/ringer_mode_statuses.dart';
+import 'package:volume_control/view_model/controllers/dbcontroller.dart';
 import 'package:volume_control/model/util/app_constants.dart';
 import 'package:volume_control/model/util/entension_methods.dart';
-import '../model/models/scenario_model.dart';
+import '../../model/models/current_system_settings.dart';
+import '../../model/models/scenario_model.dart';
 
 Box box = Hive.box(AppConstants.boxName);
 
@@ -42,8 +47,10 @@ class AddScenarioController extends GetxController {
       updateList = Get.arguments;
       _onEdit(updateList!);
     }
-    _getCurrentVolume();
-
+    FlutterVolumeController.addListener((value) {
+      volume.value = value;
+    });
+    _getVolumeMode();
     super.onInit();
   }
 
@@ -52,13 +59,23 @@ class AddScenarioController extends GetxController {
     for (int i = 0; i < dayList.length; i++) {
       dayList[i].selected = false;
     }
+    FlutterVolumeController.removeListener();
     super.onClose();
   }
 
-  _getCurrentVolume() async {
-    double? vol = await FlutterVolumeController.getVolume();
+  _getVolumeMode() async {
+    var mode = await SoundMode.ringerModeStatus;
 
-    volume.value = (vol ?? 0) * 100;
+    switch (mode) {
+      case RingerModeStatus.silent:
+        volumeMode.value = AppConstants.volSilent;
+        break;
+      case RingerModeStatus.vibrate:
+        volumeMode.value = AppConstants.volViberate;
+        break;
+      default:
+        volumeMode.value = AppConstants.volNormal;
+    }
   }
 
   /// load values from list item to edit page
@@ -71,7 +88,7 @@ class AddScenarioController extends GetxController {
     repeatDays.value = data.repeat ?? [];
     titleController.value.text = data.title ?? '';
     volumeMode.value = data.volumeMode;
-    volume.value = (data.volume) / 100;
+    volume.value = data.volume;
 
     _toggleButtons();
   }
@@ -127,6 +144,18 @@ class AddScenarioController extends GetxController {
     return list;
   }
 
+  _saveCurrentSettings() async {
+    double? currentVolume = await FlutterVolumeController.getVolume();
+    RingerModeStatus currentVolMode = await SoundMode.ringerModeStatus;
+    var data = CurrentSystemSettings(
+        volume: currentVolume ?? 1,
+        changeVol: changeVolume.value,
+        volumeMode: currentVolMode.name,
+        title: titleController.value.text);
+
+    await box.put(AppConstants.systemSettings, jsonEncode(data.toJson()));
+  }
+
   /// Adds a new Scenario To scenarioList.
   addScenario() {
     int tag = updateList ?? dBcontroller.scenarioList.length;
@@ -138,25 +167,30 @@ class AddScenarioController extends GetxController {
         startTime: startTime.value.formatTime24H,
         endTime: endTime.value.formatTime24H,
         repeat: repeatDays,
+        changeVol: changeVolume.value,
         volumeMode: volumeMode.value,
-        volume: (volume.value * 100).ceil(),
+        volume: volume.value,
         isON: repeatDays.isEmpty ? false : true);
 
     if (updateList != null) {
       dBcontroller.scenarioList[updateList!] = data;
-      logPrint('data updated.. ${data.toJson()}');
     } else {
       dBcontroller.scenarioList.add(data);
-      logPrint('data saved..${data.toJson()}');
     }
 
     /// write to storage
     dBcontroller.saveList(dBcontroller.scenarioList);
 
+    /// save current settings
+    _saveCurrentSettings();
+
     /// schedule task
     if (repeatDays.isNotEmpty) {
       bgSchedular(
-          tag, Get.find<DBcontroller>().dateTimeFromTimeOfDay(startTime.value));
+        tag,
+        Get.find<DBcontroller>().dateTimeFromTimeOfDay(startTime.value),
+        Get.find<DBcontroller>().dateTimeFromTimeOfDay(endTime.value),
+      );
     }
   }
 }

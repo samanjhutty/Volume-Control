@@ -1,10 +1,10 @@
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:volume_control/view_model/dbcontroller.dart';
+import 'package:volume_control/view_model/controllers/dbcontroller.dart';
 import 'package:volume_control/model/models/scenario_model.dart';
 import 'package:volume_control/model/util/app_constants.dart';
-import 'package:volume_control/model/util/app_routes.dart';
+import 'package:volume_control/view_model/routes/app_routes.dart';
 import 'package:volume_control/model/util/entension_methods.dart';
 import '../model/util/dimens.dart';
 
@@ -123,6 +123,7 @@ class ScenarioList extends GetView<DBcontroller> {
                                         AppConstants.toIcons(
                                             list.volumeMode.toLowerCase()),
                                         height: Dimens.sizeDefault,
+                                        fit: BoxFit.cover,
                                         color: textColor),
                                     const SizedBox(width: Dimens.marginDefault),
                                     _Switch(index: index)
@@ -153,23 +154,25 @@ class _SwitchState extends State<_Switch> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
+    ScenarioModel data = controller.scenarioList[widget.index];
 
     return Switch.adaptive(
       activeColor: scheme.primaryContainer,
       activeTrackColor: scheme.onPrimaryContainer,
       onChanged: (value) {
         setState(() {
-          controller.scenarioList[widget.index].isON = value;
+          data.isON = value;
         });
         if (value) {
-          logPrint(
-              'time of day: ${controller.scenarioList[widget.index].startTime}');
+          logPrint('time of day: ${data.startTime}');
           bgSchedular(
-              controller.scenarioList[widget.index].tag,
-              controller.dateTimeFromTimeOfDay(
-                  controller.scenarioList[widget.index].startTime.toTimeOfDay));
+            data.tag,
+            controller.dateTimeFromTimeOfDay(data.startTime.toTimeOfDay),
+            controller.dateTimeFromTimeOfDay(data.endTime.toTimeOfDay),
+          );
         } else {
-          AndroidAlarmManager.cancel(controller.scenarioList[widget.index].tag);
+          AndroidAlarmManager.cancel(data.tag);
+          AndroidAlarmManager.cancel(int.parse('${data.tag}${data.tag}'));
         }
 
         /// writes the changes to local storage

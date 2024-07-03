@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:volume_control/model/bindings.dart';
-import 'package:volume_control/model/notification_services.dart';
-import 'package:volume_control/view_model/dbcontroller.dart';
+import 'package:volume_control/view_model/bindings.dart';
+import 'package:volume_control/services/notification_services.dart';
+import 'package:volume_control/view_model/controllers/dbcontroller.dart';
 import 'package:volume_control/model/util/app_constants.dart';
-import 'package:volume_control/model/util/app_pages.dart';
-import 'package:volume_control/model/util/app_routes.dart';
+import 'package:volume_control/view_model/routes/app_pages.dart';
+import 'package:volume_control/view_model/routes/app_routes.dart';
 import 'package:volume_control/view/scenario_list.dart';
 import 'model/util/dimens.dart';
 
@@ -21,12 +21,12 @@ void main() async {
 Future initServices() async {
   logPrint('init services started...');
   try {
-    await AndroidAlarmManager.initialize();
-    await NotificationServices.init();
     await Hive.initFlutter();
     await Hive.openBox(AppConstants.boxName);
+    await AndroidAlarmManager.initialize();
+    await NotificationServices.init();
   } catch (e) {
-    print('init services: $e');
+    logPrint('init services: $e');
   }
 }
 

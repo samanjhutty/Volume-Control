@@ -1,17 +1,28 @@
 class CurrentSystemSettings {
-  const CurrentSystemSettings({this.volume, this.volMode});
+  const CurrentSystemSettings({
+    this.title,
+    required this.changeVol,
+    required this.volume,
+    required this.volumeMode,
+  });
 
-  final int? volume;
-  final String? volMode;
+  final String? title;
+  final bool changeVol;
+  final double volume;
+  final String volumeMode;
 
-  factory CurrentSystemSettings.formJson(Map<String, dynamic> json) =>
+  factory CurrentSystemSettings.fromJson(Map<String, dynamic> json) =>
       CurrentSystemSettings(
+        title: json['title'],
+        changeVol: json['change_volume'],
         volume: json['volume'],
-        volMode: json['vol_mode'],
+        volumeMode: json['vol_mode'],
       );
 
   Map<String, dynamic> toJson() => {
+        'title': title,
+        'change_volume': changeVol,
         'volume': volume,
-        'vol_mode': volMode,
+        'vol_mode': volumeMode,
       };
 }
