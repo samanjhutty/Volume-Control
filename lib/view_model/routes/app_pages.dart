@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
+import 'package:volume_control/view/home.dart';
 import 'package:volume_control/view_model/bindings.dart';
-import 'package:volume_control/main.dart';
 import 'package:volume_control/view_model/routes/app_routes.dart';
 import 'package:volume_control/view/add_scenario.dart';
-import 'package:volume_control/view/settings.dart';
+import '../../view/settings.dart';
 
 class AppPages {
   static String get initial => AppRoutes.home;
@@ -16,7 +16,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.home,
-      page: () => const MainPage(),
+      page: () => const HomePage(),
       binding: InitBindings(),
     ),
     GetPage(

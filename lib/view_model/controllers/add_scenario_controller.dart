@@ -1,36 +1,35 @@
-import 'dart:convert';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'package:get/get.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sound_mode/sound_mode.dart';
 import 'package:sound_mode/utils/ringer_mode_statuses.dart';
+import 'package:volume_control/services/auth_services.dart';
+import 'package:volume_control/services/extension_methods.dart';
 import 'package:volume_control/view_model/controllers/dbcontroller.dart';
-import 'package:volume_control/model/util/app_constants.dart';
+import 'package:volume_control/model/util/string_resources.dart';
 import 'package:volume_control/model/util/entension_methods.dart';
 import '../../model/models/current_system_settings.dart';
 import '../../model/models/scenario_model.dart';
-
-Box box = Hive.box(AppConstants.boxName);
 
 class AddScenarioController extends GetxController {
   DBcontroller dBcontroller = Get.find();
 
   TextEditingController titleController = TextEditingController();
-  Rx<TimeOfDay> startTime = const TimeOfDay(hour: 0, minute: 0).obs;
-  Rx<TimeOfDay> endTime = const TimeOfDay(hour: 0, minute: 0).obs;
+  TimeOfDay? startTime;
+  TimeOfDay? endTime;
   RxList<bool> daySelected = <bool>[].obs;
   RxList<Widget> days = <Widget>[].obs;
   RxList<String> repeatDays = <String>[].obs;
-  RxString volumeMode = AppConstants.volNormal.obs;
+  RxString volumeMode = ''.obs;
   RxDouble volume = RxDouble(0);
   int? updateList;
   RxBool changeVolume = false.obs;
 
   RxList<ScenarioDay> dayList = List.generate(
-      AppConstants.dayList.length,
+      StringRes.dayList.length,
       (index) => ScenarioDay(
-            day: AppConstants.dayList[index],
+            day: StringRes.dayList[index],
             selected: false,
           )).obs;
 
@@ -60,26 +59,14 @@ class AddScenarioController extends GetxController {
 
   _getVolumeMode() async {
     var mode = await SoundMode.ringerModeStatus;
-
-    switch (mode) {
-      case RingerModeStatus.silent:
-        volumeMode.value = AppConstants.volSilent;
-        break;
-      case RingerModeStatus.vibrate:
-        volumeMode.value = AppConstants.volViberate;
-        break;
-      default:
-        volumeMode.value = AppConstants.volNormal;
-    }
+    volumeMode.value = mode.name;
   }
 
   /// load values from list item to edit page
   _onEdit(int index) {
     ScenarioModel data = dBcontroller.scenarioList[index];
-    logPrint('model data: onEdit ${data.toJson()}');
-
-    startTime.value = data.startTime.toTimeOfDay;
-    endTime.value = data.endTime.toTimeOfDay;
+    startTime = data.startTime.toTimeOfDay;
+    endTime = data.endTime.toTimeOfDay;
     repeatDays.value = data.repeat ?? [];
     titleController.text = data.title ?? '';
     volumeMode.value = data.volumeMode;
@@ -102,12 +89,21 @@ class AddScenarioController extends GetxController {
     TimeOfDay? time = await showTimePicker(
         builder: (context, child) => MediaQuery(
             data: MediaQuery.of(context).copyWith(
-                alwaysUse24HourFormat: dBcontroller.is24hrFormat.value),
+                alwaysUse24HourFormat:
+                    Get.find<AuthServices>().is24hrFormat.value),
             child: child!),
         context: context,
         initialTime: const TimeOfDay(hour: 0, minute: 0));
 
     return time;
+  }
+
+  void deleteScenario() async {
+    dBcontroller.scenarioList.removeAt(updateList!);
+    Get.back();
+
+    dBcontroller.saveList(dBcontroller.scenarioList);
+    await AndroidAlarmManager.cancel(updateList! + 1);
   }
 
   /// Returns the days where selected is true.
@@ -148,18 +144,17 @@ class AddScenarioController extends GetxController {
         volumeMode: currentVolMode.name,
         title: titleController.text.isEmpty ? null : titleController.text);
 
-    await box.put(
-        AppConstants.systemSettings(index), jsonEncode(data.toJson()));
+    await dBcontroller.saveSystemSettings(data, index: index);
   }
 
   /// Adds a new Scenario To scenarioList.
-  addScenario() {
+  addScenario() async {
+    if (startTime == null || endTime == null) return;
     int tag = updateList ?? dBcontroller.scenarioList.length;
     ScenarioModel data = ScenarioModel(
         title: titleController.text.isEmpty ? null : titleController.text,
-        tag: tag,
-        startTime: startTime.value.formatTime24H,
-        endTime: endTime.value.formatTime24H,
+        startTime: startTime!.formatTime24H,
+        endTime: endTime!.formatTime24H,
         repeat: repeatDays,
         changeVol: changeVolume.value,
         volumeMode: volumeMode.value,
@@ -173,17 +168,17 @@ class AddScenarioController extends GetxController {
     }
 
     /// write to storage
-    dBcontroller.saveList(dBcontroller.scenarioList);
+    await dBcontroller.saveList(dBcontroller.scenarioList);
 
     /// save current settings
-    _saveCurrentSettings(index: tag);
+    await _saveCurrentSettings(index: tag);
 
     /// schedule task
     if (repeatDays.isNotEmpty) {
       createScenario(
-        tag: tag,
-        startTime: startTime.value.toDateTime,
-        endTime: endTime.value.toDateTime,
+        tag: tag + 1,
+        startTime: startTime!.toDateTime,
+        endTime: endTime!.toDateTime,
       );
     }
   }

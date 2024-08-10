@@ -1,17 +1,5 @@
 class ScenarioModel {
-  ScenarioModel(
-      {required this.title,
-      required this.tag,
-      required this.startTime,
-      required this.endTime,
-      this.repeat,
-      required this.changeVol,
-      required this.volumeMode,
-      this.volume = 0,
-      this.isON = false});
-
   final String? title;
-  final int tag;
   final String startTime;
   final String endTime;
   final List<String>? repeat;
@@ -20,9 +8,40 @@ class ScenarioModel {
   final double volume;
   bool isON;
 
+  ScenarioModel(
+      {required this.title,
+      required this.startTime,
+      required this.endTime,
+      this.repeat,
+      required this.changeVol,
+      required this.volumeMode,
+      this.volume = 0,
+      this.isON = false});
+
+  ScenarioModel copyWith({
+    String? title,
+    String? startTime,
+    String? endTime,
+    List<String>? repeat,
+    bool? changeVol,
+    String? volumeMode,
+    double? volume,
+    bool? isON,
+  }) {
+    return ScenarioModel(
+      title: title ?? this.title,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
+      repeat: repeat ?? this.repeat,
+      changeVol: changeVol ?? this.changeVol,
+      volumeMode: volumeMode ?? this.volumeMode,
+      volume: volume ?? this.volume,
+      isON: isON ?? this.isON,
+    );
+  }
+
   factory ScenarioModel.fromJson(Map<String, dynamic> json) => ScenarioModel(
       title: json['title'],
-      tag: json['tag'],
       startTime: json['start_time'],
       endTime: json['end_time'],
       repeat: (json['repeat'] as List).cast<String>(),
@@ -33,7 +52,6 @@ class ScenarioModel {
 
   Map<String, dynamic> toJson() => {
         'title': title,
-        'tag': tag,
         'start_time': startTime,
         'end_time': endTime,
         'repeat': repeat,

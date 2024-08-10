@@ -1,5 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:volume_control/model/util/app_constants.dart';
+import 'package:volume_control/model/util/string_resources.dart';
 
 final _notiPlugin = FlutterLocalNotificationsPlugin();
 
@@ -36,13 +36,13 @@ class NotificationServices {
       String? payload}) async {
     // display a dialog with the notification details, tap ok to go to another page
     const androidDetails = AndroidNotificationDetails(
-      AppConstants.channelId,
-      AppConstants.channelName,
-      channelDescription: AppConstants.channelDesc,
+      StringRes.channelId,
+      StringRes.channelName,
+      channelDescription: StringRes.channelDesc,
       importance: Importance.high,
     );
     const iosDetails = DarwinNotificationDetails(
-      categoryIdentifier: AppConstants.channelId,
+      categoryIdentifier: StringRes.channelId,
       interruptionLevel: InterruptionLevel.active,
     );
     const notiDetails =

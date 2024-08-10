@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
-class AppConstants {
+class StringRes {
   /// app constants
   static const String appName = 'Volume Control';
   static const String timeOfDayFormat = 'Hms';
@@ -24,9 +25,6 @@ class AppConstants {
   /// volume mode constants
   static const String vol = 'Volume';
   static const String volMode = 'Mode';
-  static const String volNormal = 'Normal';
-  static const String volSilent = 'Silent';
-  static const String volViberate = 'Viberate';
 
   /// Time constants
   static const String startTime = 'Start Time';
@@ -36,6 +34,23 @@ class AppConstants {
   static const String repeat = 'Repeat';
   static const String everyday = 'Everyday';
   static const String dayNever = 'Never';
+
+  /// error
+  static const String errorSameTime = 'End time cannot be same as start time!';
+  static const String errorSetTime = 'Set time first';
+
+  static const String noScenarioText = 'No Scenario running';
+  static const String createScenario = 'Create a new scenario';
+  static const String sceName = 'Scenario Name';
+  static const String save = 'Save';
+  static const String cancel = 'Cancel';
+  static const String settings = 'Settings';
+  static const String changeVol = 'Modify Volume Settings';
+  static const String changeTheme = 'Change Theme';
+  static const String changeTime = 'Change to 24Hr clock';
+  static const String text24hr = 'Use 24hr format';
+
+  static String toIcons(String icon) => 'assets/icons/$icon.png';
   static const List<String> dayList = [
     'Mon',
     'Tue',
@@ -45,21 +60,14 @@ class AppConstants {
     'Sat',
     'Sun',
   ];
-
-  /// page specific constants
-  static const String noScenarioText = 'No Scenario running';
-  static const String createScenario = 'Create a Scenario';
-  static const String sceName = 'Scenario Name';
-  static const String save = 'Save';
-  static const String cancel = 'Cancel';
-  static const String settings = 'Settings';
-  static const String changeVol = 'Modify Volume Settings';
-
-  static String toIcons(String icon) => 'assets/icons/$icon.png';
 }
 
 void logPrint(String? message) {
   if (kDebugMode) {
     Get.log(message ?? 'null');
   }
+}
+
+void showToast(String? msg) {
+  Fluttertoast.showToast(msg: msg ?? 'null');
 }
