@@ -8,7 +8,6 @@ import 'package:volume_control/services/auth_services.dart';
 import 'package:volume_control/services/extension_methods.dart';
 import 'package:volume_control/view_model/controllers/dbcontroller.dart';
 import 'package:volume_control/model/util/string_resources.dart';
-import 'package:volume_control/model/util/entension_methods.dart';
 import '../../model/models/current_system_settings.dart';
 import '../../model/models/scenario_model.dart';
 

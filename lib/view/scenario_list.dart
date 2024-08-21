@@ -1,16 +1,14 @@
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:volume_control/model/util/color_resources.dart';
 import 'package:volume_control/services/auth_services.dart';
 import 'package:volume_control/services/extension_methods.dart';
+import 'package:volume_control/services/theme_services.dart';
 import 'package:volume_control/view/widgets/switch_widget.dart';
 import 'package:volume_control/view_model/controllers/dbcontroller.dart';
 import 'package:volume_control/model/models/scenario_model.dart';
 import 'package:volume_control/model/util/string_resources.dart';
 import 'package:volume_control/view_model/routes/app_routes.dart';
-import 'package:volume_control/model/util/entension_methods.dart';
 import '../model/util/dimens.dart';
 
 class ScenarioList extends GetView<DBcontroller> {
@@ -18,7 +16,7 @@ class ScenarioList extends GetView<DBcontroller> {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final scheme = ThemeServices.of(context);
     AuthServices services = Get.find();
 
     return Column(
@@ -33,7 +31,7 @@ class ScenarioList extends GetView<DBcontroller> {
                 'Click on + icon to add scenarios',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: ColorRes.surface.withOpacity(0.5),
+                    color: ThemeServices.of(context).surface.withOpacity(0.5),
                     fontWeight: FontWeight.w900,
                     fontSize: Dimens.fontSuperSuperLarge),
               ),
@@ -47,7 +45,8 @@ class ScenarioList extends GetView<DBcontroller> {
                   Color textColor = scheme.onPrimaryContainer;
 
                   return Card(
-                    color: scheme.secondaryContainer,
+                    color: scheme.background,
+                    surfaceTintColor: Colors.transparent,
                     elevation: Dimens.sizeSmall,
                     margin: const EdgeInsets.all(Dimens.sizeSmall),
                     child: InkWell(

@@ -4,6 +4,9 @@ PODS:
     - Flutter
   - flutter_volume_controller (0.0.1):
     - Flutter
+  - fluttertoast (0.0.2):
+    - Flutter
+    - Toast
   - Mute (0.6.1)
   - path_provider_foundation (0.0.1):
     - Flutter
@@ -13,11 +16,13 @@ PODS:
   - sound_mode (0.0.1):
     - Flutter
     - Mute (~> 0.6.0)
+  - Toast (4.1.1)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_volume_controller (from `.symlinks/plugins/flutter_volume_controller/ios`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - sound_mode (from `.symlinks/plugins/sound_mode/ios`)
@@ -25,6 +30,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Mute
+    - Toast
 
 EXTERNAL SOURCES:
   Flutter:
@@ -33,6 +39,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_volume_controller:
     :path: ".symlinks/plugins/flutter_volume_controller/ios"
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
@@ -44,10 +52,12 @@ SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
   flutter_volume_controller: e4d5832f08008180f76e30faf671ffd5a425e529
+  fluttertoast: e9a18c7be5413da53898f660530c56f35edfba9c
   Mute: 20135a96076f140cc82bfc8b810e2d6150d8ec7e
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   sound_mode: ef0072f20e7306c1c371984a443156e39be092d5
+  Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
 
 PODFILE CHECKSUM: 075ddf6b19cdcced44581bd8fbdfb58404a78f8a
 

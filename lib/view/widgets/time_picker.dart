@@ -8,6 +8,7 @@ class MyTimePicker extends StatefulWidget {
   final double? extentFactor;
   final int? visibleChildren;
   final TextStyle? textStyle;
+  final Color? color;
   final double? unselectedItemOpacity;
   final TimeOfDay initalTime;
   final Function(TimeOfDay time) onChanged;
@@ -16,6 +17,7 @@ class MyTimePicker extends StatefulWidget {
     super.key,
     this.itemExtent,
     this.textStyle,
+    this.color,
     this.unselectedItemOpacity,
     this.extentFactor,
     this.heightFactor,
@@ -50,7 +52,10 @@ class _MyTimePickerState extends State<MyTimePicker> {
     _heightFactor = widget.heightFactor ?? 0.0416;
 
     textStyle = widget.textStyle ??
-        TextStyle(fontSize: fontSize, fontWeight: FontWeight.w900);
+        TextStyle(
+            fontSize: fontSize,
+            fontWeight: FontWeight.w900,
+            color: widget.color);
 
     // calclaions based on values provided
     _itemExtent = itemExtent * (textStyle.fontSize ?? fontSize) * _extentFactor;

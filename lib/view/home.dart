@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:volume_control/model/util/color_resources.dart';
+import 'package:volume_control/services/theme_services.dart';
 import 'package:volume_control/view_model/controllers/dbcontroller.dart';
 import '../model/util/dimens.dart';
 import '../model/util/string_resources.dart';
@@ -12,35 +12,38 @@ class HomePage extends GetView<DBcontroller> {
 
   @override
   Widget build(BuildContext context) {
-    ColorScheme scheme = Theme.of(context).colorScheme;
+    var scheme = ThemeServices.of(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: scheme.primaryContainer,
-        title: const Text(StringRes.noScenarioText,
+        centerTitle: false,
+        title: Text(StringRes.noScenarioText,
             style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: Dimens.fontExtraLarge,
-                color: ColorRes.textColor)),
+              fontWeight: FontWeight.w600,
+              fontSize: Dimens.fontExtraLarge,
+              color: ThemeServices.of(context).textColor,
+            )),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(40),
           child: Row(
             children: [
               const SizedBox(width: Dimens.sizeDefault),
-              const Text(
+              Text(
                 StringRes.createScenario,
-                style: TextStyle(fontWeight: FontWeight.w500),
+                style: TextStyle(
+                    fontWeight: FontWeight.w500, color: scheme.textColor),
               ),
               const Spacer(),
               IconButton(
                 onPressed: () => Get.toNamed(AppRoutes.addScenario),
                 icon: const Icon(Icons.add_rounded),
                 iconSize: Dimens.sizeMediumLarge + 4,
-                color: ColorRes.textColor,
+                color: ThemeServices.of(context).textColor,
               ),
               IconButton(
                 onPressed: () => Get.toNamed(AppRoutes.settings),
                 icon: const Icon(Icons.settings),
-                color: ColorRes.textColor,
+                color: ThemeServices.of(context).textColor,
               ),
             ],
           ),

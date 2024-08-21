@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volume_control/services/theme_services.dart';
 
 class MyCheckBox extends StatefulWidget {
   final bool value;
@@ -20,10 +21,13 @@ class _MyCheckBoxState extends State<MyCheckBox> {
 
   @override
   Widget build(BuildContext context) {
+    var scheme = ThemeServices.of(context);
     return Checkbox(
+      side: BorderSide(color: scheme.textColorDisabled, width: 2),
+      activeColor: scheme.primary,
       visualDensity: VisualDensity.compact,
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       value: value,
-      splashRadius: 5,
       onChanged: (value) {
         setState(() {
           this.value = value;

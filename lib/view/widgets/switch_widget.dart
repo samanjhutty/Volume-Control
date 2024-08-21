@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/theme_services.dart';
 
 class MySwitchWidget extends StatefulWidget {
   final bool value;
@@ -20,7 +21,7 @@ class MySwitchWidgetState extends State<MySwitchWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final scheme = ThemeServices.of(context);
 
     return Switch.adaptive(
       activeColor: scheme.primaryContainer,

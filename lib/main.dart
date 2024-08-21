@@ -1,5 +1,6 @@
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -16,7 +17,6 @@ void main() async {
   runApp(const ThemeServices(child: MyApp()));
 }
 
-/// init services required for app to function properly.
 Future initServices() async {
   logPrint('init services started...');
   try {
@@ -25,6 +25,7 @@ Future initServices() async {
     await Get.putAsync(() => AuthServices().init());
     await AndroidAlarmManager.initialize();
     await NotificationServices.init();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   } catch (e) {
     logPrint('init services: $e');
   }
@@ -35,6 +36,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Get.find<AuthServices>().theme;
+
     return GetMaterialApp(
       initialBinding: InitBindings(),
       title: StringRes.appName,
@@ -51,29 +54,13 @@ class MyApp extends StatelessWidget {
           const ResponsiveBreakpoint.autoScale(1700, name: '4K'),
         ],
       ),
-      // theme: ThemeData.from(
-      //     colorScheme: ColorScheme.fromSeed(
-      //         primary: Colors.deepPurple,
-      //         onPrimary: Colors.white,
-      //         primaryContainer: const Color(0xFFCFBAF4),
-      //         onPrimaryContainer: const Color(0xFF2C194E),
-      //         secondaryContainer: const Color(0xFFF6F2FC),
-      //         onSecondaryContainer: const Color(0xFF1C1C1C),
-      //         seedColor: Colors.deepPurple,
-      //         brightness: Brightness.light),
-      //     useMaterial3: true),
-      // darkTheme: ThemeData.from(
-      //     colorScheme: ColorScheme.fromSeed(
-      //         primary: Colors.deepPurple,
-      //         onPrimary: Colors.white,
-      //         primaryContainer: const Color(0xFF2C194E),
-      //         onPrimaryContainer: const Color(0xFFCFBAF4),
-      //         secondaryContainer: const Color(0xFF1C1C1C),
-      //         onSecondaryContainer: const Color(0xFFF6F2FC),
-      //         seedColor: const Color(0xFF371F61),
-      //         brightness: Brightness.dark),
-      //     useMaterial3: true),
-      themeMode: ThemeMode.system,
+      theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+              primary: theme.primary,
+              onPrimary: theme.onPrimary,
+              seedColor: theme.primary,
+              brightness: theme.brightness),
+          useMaterial3: true),
     );
   }
 }

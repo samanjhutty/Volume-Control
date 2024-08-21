@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sound_mode/utils/ringer_mode_statuses.dart';
+import 'package:volume_control/model/util/color_resources.dart';
 import 'package:volume_control/view/widgets/checkbox_tile.dart';
 import 'package:volume_control/view/widgets/time_picker.dart';
 import 'package:volume_control/view_model/controllers/add_scenario_controller.dart';
 import 'package:volume_control/view_model/controllers/dbcontroller.dart';
 import 'package:volume_control/model/util/string_resources.dart';
 import '../model/util/dimens.dart';
+import '../services/theme_services.dart';
 
 class AddScenario extends GetView<AddScenarioController> {
   const AddScenario({super.key});
 
   @override
   Widget build(BuildContext context) {
-    ColorScheme scheme = Theme.of(context).colorScheme;
+    var scheme = ThemeServices.of(context);
     var db = Get.find<DBcontroller>();
     return Scaffold(
       body: CustomScrollView(
@@ -32,9 +34,9 @@ class AddScenario extends GetView<AddScenarioController> {
                   onPressed: controller.updateList != null
                       ? () => controller.deleteScenario()
                       : () => Get.back(),
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.delete,
-                    color: scheme.error,
+                    color: ColorRes.onErrorContainer,
                   ))
             ],
             flexibleSpace: FlexibleSpaceBar(
@@ -49,14 +51,16 @@ class AddScenario extends GetView<AddScenarioController> {
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text(
+                          Text(
                             StringRes.startTime,
                             style: TextStyle(
+                                color: scheme.textColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: Dimens.fontLarge),
                           ),
                           const SizedBox(height: Dimens.sizeSmall),
                           MyTimePicker(
+                            color: scheme.textColor,
                             initalTime: controller.startTime ??
                                 TimeOfDay.fromDateTime(DateTime.now()),
                             onChanged: (time) {
@@ -68,14 +72,16 @@ class AddScenario extends GetView<AddScenarioController> {
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text(
+                          Text(
                             StringRes.endTime,
                             style: TextStyle(
+                                color: scheme.textColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: Dimens.fontLarge),
                           ),
                           const SizedBox(height: Dimens.sizeSmall),
                           MyTimePicker(
+                            color: scheme.textColor,
                             initalTime: controller.endTime ??
                                 TimeOfDay.fromDateTime(DateTime.now()
                                     .add(const Duration(hours: 2))),
@@ -97,16 +103,17 @@ class AddScenario extends GetView<AddScenarioController> {
             child: Container(
               padding: const EdgeInsets.all(Dimens.sizeDefault),
               decoration: BoxDecoration(
-                  color: scheme.surface,
+                  color: scheme.background,
                   borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(Dimens.borderRadiusLarge))),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: Dimens.sizeSmall),
-                    const Text(
+                    Text(
                       StringRes.repeat,
                       style: TextStyle(
+                          color: scheme.textColor,
                           fontWeight: FontWeight.w600,
                           fontSize: Dimens.fontLarge),
                     ),
@@ -115,8 +122,10 @@ class AddScenario extends GetView<AddScenarioController> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(Dimens.sizeSmall),
-                          child: Obx(() =>
-                              Text(db.repeatDaysText(controller.repeatDays))),
+                          child: Obx(() => Text(
+                                db.repeatDaysText(controller.repeatDays),
+                                style: TextStyle(color: scheme.textColor),
+                              )),
                         ),
                         const SizedBox(height: Dimens.sizeSmall),
                         Center(
@@ -126,6 +135,7 @@ class AddScenario extends GetView<AddScenarioController> {
                               () => ToggleButtons(
                                   fillColor: scheme.onPrimaryContainer,
                                   selectedColor: scheme.primaryContainer,
+                                  color: scheme.textColor,
                                   renderBorder: false,
                                   borderRadius: BorderRadius.circular(
                                       Dimens.borderRadiusDefault),
@@ -151,17 +161,24 @@ class AddScenario extends GetView<AddScenarioController> {
                     const SizedBox(height: Dimens.sizeMedium),
                     TextFormField(
                       controller: controller.titleController,
+                      cursorColor: scheme.primary,
                       decoration: InputDecoration(
-                          labelStyle: TextStyle(color: scheme.onSurface),
+                          floatingLabelStyle:
+                              TextStyle(color: scheme.onPrimaryContainer),
                           labelText: StringRes.sceName,
-                          border: const OutlineInputBorder(),
+                          labelStyle:
+                              TextStyle(color: scheme.textColorDisabled),
+                          border: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: scheme.textColorDisabled)),
                           focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                  color: scheme.onPrimaryContainer))),
+                                  width: 2, color: scheme.onPrimaryContainer))),
                     ),
                     const SizedBox(height: Dimens.sizeDefault),
-                    const Text(StringRes.volMode,
+                    Text(StringRes.volMode,
                         style: TextStyle(
+                            color: scheme.textColor,
                             fontSize: Dimens.fontLarge,
                             fontWeight: FontWeight.w600)),
                     const SizedBox(height: Dimens.sizeDefault),
@@ -170,22 +187,30 @@ class AddScenario extends GetView<AddScenarioController> {
                           .map((e) => e.index == 0
                               ? const SizedBox()
                               : Expanded(
-                                  child: Obx(
-                                    () => RadioMenuButton(
-                                        style: _radioButtonStyle(),
-                                        value: e.name,
-                                        groupValue: controller.volumeMode.value,
-                                        onChanged: (value) {
-                                          controller.volumeMode.value = value!;
-                                        },
-                                        child: Text(e.name.capitalize!)),
+                                  child: RadioTheme(
+                                    data: RadioTheme.of(context).copyWith(
+                                        fillColor: MaterialStatePropertyAll(
+                                            scheme.primary)),
+                                    child: Obx(
+                                      () => RadioMenuButton(
+                                          style: _radioButtonStyle(context),
+                                          value: e.name,
+                                          groupValue:
+                                              controller.volumeMode.value,
+                                          onChanged: (value) {
+                                            controller.volumeMode.value =
+                                                value!;
+                                          },
+                                          child: Text(e.name.capitalize!)),
+                                    ),
                                   ),
                                 ))
                           .toList(),
                     ),
                     const SizedBox(height: Dimens.sizeDefault),
-                    const Text(StringRes.vol,
+                    Text(StringRes.vol,
                         style: TextStyle(
+                            color: scheme.textColor,
                             fontSize: Dimens.fontLarge,
                             fontWeight: FontWeight.w600)),
                     const SizedBox(height: Dimens.sizeSmall),
@@ -196,32 +221,44 @@ class AddScenario extends GetView<AddScenarioController> {
                             onChanged: (value) {
                               controller.changeVolume.value = value ?? false;
                             }),
-                        const Text(StringRes.changeVol)
+                        Text(
+                          StringRes.changeVol,
+                          style: TextStyle(color: scheme.textColor),
+                        )
                       ],
                     ),
                     const SizedBox(height: Dimens.sizeDefault),
-                    Obx(
-                      () => Row(
-                        children: [
-                          Expanded(
-                              child: Slider(
-                                  thumbColor: scheme.onPrimaryContainer,
-                                  activeColor: scheme.onPrimaryContainer,
-                                  value: controller.volume.value,
-                                  onChanged: controller.changeVolume.value
-                                      ? (value) {
-                                          controller.volume.value = value;
-                                        }
-                                      : null)),
-                          Padding(
-                            padding: const EdgeInsets.all(Dimens.sizeSmall),
-                            child: Text(
-                              '${(controller.volume.value * 100).ceil()}',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                          )
-                        ],
+                    SliderTheme(
+                      data: SliderThemeData(
+                          disabledThumbColor: scheme.textColorDisabled,
+                          disabledActiveTrackColor: Colors.grey,
+                          disabledInactiveTrackColor:
+                              scheme.textColorDisabled.withOpacity(0.5)),
+                      child: Obx(
+                        () => Row(
+                          children: [
+                            Expanded(
+                                child: Slider(
+                                    inactiveColor: scheme.textColorLight,
+                                    thumbColor: scheme.onPrimaryContainer,
+                                    activeColor: scheme.onPrimaryContainer,
+                                    value: controller.volume.value,
+                                    onChanged: controller.changeVolume.value
+                                        ? (value) {
+                                            controller.volume.value = value;
+                                          }
+                                        : null)),
+                            Padding(
+                              padding: const EdgeInsets.all(Dimens.sizeSmall),
+                              child: Text(
+                                '${(controller.volume.value * 100).ceil()}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: scheme.textColor),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ]),
@@ -230,7 +267,7 @@ class AddScenario extends GetView<AddScenarioController> {
         ],
       ),
       bottomNavigationBar: Container(
-        color: scheme.surface,
+        color: scheme.background,
         padding: const EdgeInsets.only(bottom: Dimens.sizeSmall),
         child: Row(
           children: [
@@ -270,8 +307,9 @@ class AddScenario extends GetView<AddScenarioController> {
     );
   }
 
-  ButtonStyle _radioButtonStyle() {
+  ButtonStyle _radioButtonStyle(BuildContext context) {
     return IconButton.styleFrom(
+        foregroundColor: ThemeServices.of(context).textColor,
         padding: const EdgeInsets.symmetric(horizontal: Dimens.sizeDefault),
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(

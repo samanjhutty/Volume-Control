@@ -15,6 +15,7 @@ class StringRes {
   static const String scenarioList = 'scenarioList';
   static String systemSettings(int index) => 'system-settings:$index';
   static const String is24hr = '24hr-format';
+  static const String appTheme = 'App-Theme';
 
   /// notification constants
   static const String channelId = 'sc-notify';
