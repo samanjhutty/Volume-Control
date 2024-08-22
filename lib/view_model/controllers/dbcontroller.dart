@@ -8,15 +8,17 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:sound_mode/sound_mode.dart';
 import 'package:sound_mode/utils/ringer_mode_statuses.dart';
 import 'package:volume_control/model/models/scenario_model.dart';
+import 'package:volume_control/services/extension_methods.dart';
 import 'package:volume_control/services/notification_services.dart';
 import '../../model/models/current_system_settings.dart';
-import '../../model/util/app_constants.dart';
+import '../../model/util/string_resources.dart';
 
-class DBcontroller extends GetxController {
-  RxList<ScenarioModel> scenarioList = <ScenarioModel>[].obs;
-  Box box = Hive.box(AppConstants.boxName);
-  RxBool is24hrFormat = false.obs;
-  RxBool darkTheme = RxBool(Get.theme.brightness == Brightness.dark);
+class DBcontroller extends GetxController with GetTickerProviderStateMixin {
+  RxList<ScenarioModel> scenarioList = RxList();
+  Box box = Hive.box(StringRes.boxName);
+
+  late TabController timeFormatController;
+  RxBool darkTheme = Get.isDarkMode.obs;
   List<Permission> permissions = [
     Permission.scheduleExactAlarm,
     Permission.notification,
@@ -25,66 +27,31 @@ class DBcontroller extends GetxController {
   ];
   @override
   onInit() {
-    scenarioList.value = _getBoxList();
-    is24hrFormat.value = box.get(AppConstants.is24hr, defaultValue: false);
-
-    Future.delayed(const Duration(seconds: 1), () => checkPermissions());
+    scenarioList.value = getBoxList();
+    // Future.delayed(const Duration(seconds: 1), () => checkPermissions());
     super.onInit();
   }
 
-  /// load the box list to model list.
-  List<ScenarioModel> _getBoxList() {
-    List list = [];
-    list = box.get(AppConstants.scenarioList, defaultValue: []);
-
-    return List<ScenarioModel>.from(
-        list.map((json) => ScenarioModel.fromJson(jsonDecode(json))));
-  }
-
   /// checks required permissions.
-  checkPermissions() async {
+  Future<bool> checkPermissions() async {
     for (var element in permissions) {
       if (!await element.isGranted) {
-        return _showPermissionDialog(Get.context!);
-      } else {
-        logPrint('$permissions granted');
+        return false;
       }
     }
+    return true;
   }
-
-  /// shows a dialog at start of app to ask for permissions.
-  _showPermissionDialog(BuildContext context) => showDialog(
-      context: context,
-      builder: (context) => AlertDialog.adaptive(
-            title: const Text('Permissions Required'),
-            content: const Text(
-                'In order for this application to work some permissions need to be granted'),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    navigator?.pop();
-                    permissions.request();
-                  },
-                  child: const Text('Okay'))
-            ],
-          ));
 
   /// get string of selected days, dynamically
   String repeatDaysText(List days) {
     switch (days.length) {
       case 0:
-        return AppConstants.dayNever;
+        return StringRes.dayNever;
       case 7:
-        return AppConstants.everyday;
+        return StringRes.everyday;
       default:
         return days.toString().replaceAll('[', '').replaceAll(']', '');
     }
-  }
-
-  /// save the list of model to json format in box.
-  Future<void> saveList(List<ScenarioModel> list) async {
-    await box.put(AppConstants.scenarioList,
-        list.map((e) => jsonEncode(e.toJson())).toList());
   }
 }
 
@@ -96,19 +63,21 @@ Future<void> createScenario(
   DateTime startAt = startTime.subtract(const Duration(minutes: 5));
   DateTime now = DateTime.now();
   if (startAt.isBefore(now) && endTime.isAfter(now)) {
-    startAt = now.add(const Duration(minutes: 1));
+    startAt = now.add(const Duration(seconds: 10));
   }
   logPrint(
-      'am:: createScenario:: tag: $tag, startAt: $startAt, ranAt:${DateTime.now()}');
+      '(AlarmManager):: createScenario:: tag: $tag, startAt: $startAt, startDate: ${startTime.toString()}, ranAt:${DateTime.now()}');
   AndroidAlarmManager.periodic(
     const Duration(days: 1),
-    tag,
+    tag + 1,
     bgSchedular,
     startAt: startAt,
     exact: true,
     wakeup: true,
+    allowWhileIdle: true,
     rescheduleOnReboot: true,
     params: {
+      'index': tag - 1,
       'start_time': startTime.toString(),
       'end_time': endTime.toString(),
     },
@@ -119,33 +88,34 @@ Future<void> createScenario(
 Future<void> bgSchedular(int tag, Map<String, dynamic> params) async {
   /// in case tag is 0, will create same id for both tasks,
   /// i.e. startSchedule id: 0,endSchedule id: 00
-  int id = int.parse('${tag + 1}${tag + 1}');
+  int id = int.parse('$tag$tag');
 
   // get data from function params.
+  int index = params['index'];
   DateTime startTime = DateTime.parse(params['start_time']);
   DateTime endTime = DateTime.parse(params['end_time']);
 
   // init Hive to load and read box contents.
   await Hive.initFlutter();
-  var box = await Hive.openBox(AppConstants.boxName);
+  var box = await Hive.openBox(StringRes.boxName);
 
   // fetch scenario list.
-  List scenarioList = box.get(AppConstants.scenarioList);
+  List scenarioList = box.get(StringRes.scenarioList);
   List<ScenarioModel>? modelList = List<ScenarioModel>.from(
       scenarioList.map((json) => ScenarioModel.fromJson(jsonDecode(json))));
-  var scenarioModel = modelList.elementAt(tag);
+  var scenarioModel = modelList.elementAt(index);
   // fetch volume settings.
-  String? systemSettings = box.get(AppConstants.systemSettings(tag));
+  String? systemSettings = box.get(StringRes.systemSettings(index));
 
   // get current day
   int dayofWeek = DateTime.now().weekday;
-  String today = AppConstants.dayList[dayofWeek - 1];
+  String today = StringRes.dayList[dayofWeek - 1];
 
   logPrint(
-      'am:: bgSchedular:: id: $id, tag: $tag, today: $today, startDate: ${startTime.toString()}, ranAt:${DateTime.now()}');
+      '(AlarmManager):: bgSchedular:: id: $id, tag: $tag, today: $today, startDate: ${startTime.toString()}, ranAt:${DateTime.now()}');
   if (scenarioModel.repeat?.contains(today) ?? false) {
     // schedule scenario
-    await AndroidAlarmManager.oneShotAt(startTime, id, startSchedule,
+    AndroidAlarmManager.oneShotAt(startTime, id, startSchedule,
         exact: true,
         wakeup: true,
         rescheduleOnReboot: true,
@@ -154,7 +124,7 @@ Future<void> bgSchedular(int tag, Map<String, dynamic> params) async {
         });
     int endId = int.parse('$id$tag');
     // end scenario
-    await AndroidAlarmManager.oneShotAt(endTime, endId, endSchedule,
+    AndroidAlarmManager.oneShotAt(endTime, endId, endSchedule,
         exact: true,
         wakeup: true,
         rescheduleOnReboot: true,
@@ -167,24 +137,16 @@ Future<void> bgSchedular(int tag, Map<String, dynamic> params) async {
 }
 
 @pragma('vm:entry-point')
-Future<void> startSchedule(int tag, Map<String, dynamic> json) async {
+void startSchedule(int tag, Map<String, dynamic> json) {
   String modelJson = json['scenario_model'];
   ScenarioModel data = ScenarioModel.fromJson(jsonDecode(modelJson));
-
   if (data.changeVol) {
-    await FlutterVolumeController.setVolume(data.volume.toDouble());
+    FlutterVolumeController.setVolume(data.volume.toDouble());
   }
-
-  switch (data.volumeMode) {
-    case AppConstants.volSilent:
-      await SoundMode.setSoundMode(RingerModeStatus.silent);
-      break;
-    case AppConstants.volViberate:
-      await SoundMode.setSoundMode(RingerModeStatus.vibrate);
-      break;
-    default:
-      await SoundMode.setSoundMode(RingerModeStatus.normal);
-  }
+  RingerModeStatus status = RingerModeStatus.values.firstWhere(
+      (element) => element.name == data.volumeMode,
+      orElse: () => RingerModeStatus.normal);
+  SoundMode.setSoundMode(status);
 
   NotificationServices.showNotification(
       id: tag,
@@ -193,7 +155,7 @@ Future<void> startSchedule(int tag, Map<String, dynamic> json) async {
 }
 
 @pragma('vm:entry-point')
-Future<void> endSchedule(int tag, Map<String, dynamic> json) async {
+void endSchedule(int tag, Map<String, dynamic> json) {
   String settingsJson = json['system_settings'];
   // List scenarioList = json['scenario_list'];
 
@@ -204,22 +166,19 @@ Future<void> endSchedule(int tag, Map<String, dynamic> json) async {
   // var scenario = modelList.elementAt(tag);
 
   if (data.changeVol) {
-    await FlutterVolumeController.setVolume(data.volume.toDouble());
+    FlutterVolumeController.setVolume(data.volume.toDouble());
   }
-  switch (data.volumeMode) {
-    case AppConstants.volSilent:
-      await SoundMode.setSoundMode(RingerModeStatus.silent);
-      break;
-    case AppConstants.volViberate:
-      await SoundMode.setSoundMode(RingerModeStatus.vibrate);
-      break;
-    default:
-      await SoundMode.setSoundMode(RingerModeStatus.normal);
-  }
+  RingerModeStatus status = RingerModeStatus.values.firstWhere(
+      (element) => element.name == data.volumeMode,
+      orElse: () => RingerModeStatus.normal);
+  SoundMode.setSoundMode(status);
+
   NotificationServices.showNotification(
-      id: int.parse('$tag'), title: '${data.title ?? 'Scenario'} ended');
+      id: int.parse('$tag'),
+      title: '${data.title ?? 'Scenario'} Ended',
+      body: 'Your current routine has been ended sucessfully');
 
   // scenario.isON = false;
-  // await box.put(AppConstants.scenarioList,
+  // box.put(StringRes.scenarioList,
   //     modelList.map((e) => jsonEncode(e.toJson())).toList());
 }
