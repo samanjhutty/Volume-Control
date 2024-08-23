@@ -13,28 +13,28 @@ class ColorRes {
 
 enum MyTheme {
   deepPurple.light(
-    title: 'deepPurple',
+    title: 'Deep Purple',
     primary: Colors.deepPurple,
     onPrimary: Colors.white,
     primaryContainer: Color(0xFFCFBAF4),
     onPrimaryContainer: Color(0xFF2C194E),
   ),
   blue.light(
-    title: 'blue',
+    title: 'Blue Ocean',
     primary: Colors.blueAccent,
     onPrimary: Colors.white,
     primaryContainer: Color(0xFFBAC6F4),
     onPrimaryContainer: Color(0xFF192C4E),
   ),
   brown.dark(
-    title: 'brown',
+    title: 'Dark Brown Oak',
     primary: Colors.brown,
     onPrimary: Colors.white,
     primaryContainer: Color(0xFF4E2C19),
     onPrimaryContainer: Color(0xFFF4DABA),
   ),
   lightGreeen.light(
-    title: 'lightGreen',
+    title: 'Parrot Green',
     primary: Colors.lightGreen,
     onPrimary: Colors.white,
     primaryContainer: Color(0xFFD1F4BA),
@@ -49,10 +49,9 @@ enum MyTheme {
   final Color onPrimaryContainer;
   final Color background;
   final Color surface;
-  final Color surfaceInverse;
   final Color textColor;
   final Color textColorLight;
-  final Color textColorDisabled;
+  final Color disabled;
 
   const MyTheme.dark({
     required this.title,
@@ -63,10 +62,9 @@ enum MyTheme {
   })  : brightness = Brightness.dark,
         background = const Color(0xFF212121),
         surface = const Color(0xFF303030),
-        surfaceInverse = const Color(0xFFEEEEEE),
         textColor = const Color(0xFFEEEEEE),
         textColorLight = const Color(0xFF757575),
-        textColorDisabled = Colors.grey;
+        disabled = Colors.grey;
 
   const MyTheme.light({
     required this.title,
@@ -77,8 +75,7 @@ enum MyTheme {
   })  : brightness = Brightness.light,
         background = const Color(0xFFFAFAFA),
         surface = Colors.white,
-        surfaceInverse = Colors.black,
         textColor = Colors.black87,
         textColorLight = const Color(0xFFC9C8C8),
-        textColorDisabled = Colors.grey;
+        disabled = Colors.grey;
 }

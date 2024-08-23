@@ -35,7 +35,7 @@ class ThemeServices extends StatefulWidget {
 }
 
 class _ThemeServiceState extends State<ThemeServices> {
-  var services = Get.find<AuthServices>();
+  final _services = Get.find<AuthServices>();
 
   late Color _primary;
   late Color _onPrimary;
@@ -44,10 +44,9 @@ class _ThemeServiceState extends State<ThemeServices> {
   late Brightness _brightness;
   late Color _background;
   late Color _surface;
-  late Color _surfaceInverse;
   late Color _textColor;
   late Color _textColorLight;
-  late Color _textColorDisabled;
+  late Color _disabled;
 
   Color get primary => _primary;
   Color get onPrimary => _onPrimary;
@@ -56,10 +55,9 @@ class _ThemeServiceState extends State<ThemeServices> {
   Brightness get brightness => _brightness;
   Color get background => _background;
   Color get surface => _surface;
-  Color get surfaceInverse => _surfaceInverse;
   Color get textColor => _textColor;
   Color get textColorLight => _textColorLight;
-  Color get textColorDisabled => _textColorDisabled;
+  Color get disabled => _disabled;
 
   @override
   void initState() {
@@ -71,10 +69,9 @@ class _ThemeServiceState extends State<ThemeServices> {
     _brightness = theme.brightness;
     _background = theme.background;
     _surface = theme.surface;
-    _surfaceInverse = theme.surfaceInverse;
     _textColor = theme.textColor;
     _textColorLight = theme.textColorLight;
-    _textColorDisabled = theme.textColorDisabled;
+    _disabled = theme.disabled;
 
     super.initState();
   }
@@ -87,12 +84,11 @@ class _ThemeServiceState extends State<ThemeServices> {
     _brightness = theme.brightness;
     _background = theme.background;
     _surface = theme.surface;
-    _surfaceInverse = theme.surfaceInverse;
     _textColor = theme.textColor;
     _textColorLight = theme.textColorLight;
-    _textColorDisabled = theme.textColorDisabled;
+    _disabled = theme.disabled;
     setState(() {});
-    services.saveTheme(theme);
+    _services.saveTheme(theme);
   }
 
   @override

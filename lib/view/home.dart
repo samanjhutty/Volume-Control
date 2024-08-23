@@ -58,16 +58,14 @@ class HomePage extends GetView<DBcontroller> {
                 0,
                 0.3,
                 0.7,
-                1,
               ],
                   colors: [
                 scheme.primaryContainer,
-                scheme.primaryContainer.withOpacity(0.8),
-                scheme.surface,
+                scheme.primaryContainer,
                 scheme.surface,
               ])),
           padding: const EdgeInsets.symmetric(horizontal: Dimens.sizeSmall),
-          child: const ScenarioList()),
+          child: const SafeArea(top: false, child: ScenarioList())),
     );
   }
 }

@@ -31,7 +31,7 @@ class ScenarioList extends GetView<DBcontroller> {
                 'Click on + icon to add scenarios',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: ThemeServices.of(context).surface.withOpacity(0.5),
+                    color: scheme.onPrimary.withOpacity(.2),
                     fontWeight: FontWeight.w900,
                     fontSize: Dimens.fontSuperSuperLarge),
               ),
@@ -46,7 +46,7 @@ class ScenarioList extends GetView<DBcontroller> {
 
                   return Card(
                     color: scheme.background,
-                    surfaceTintColor: Colors.transparent,
+                    surfaceTintColor: scheme.primary,
                     elevation: Dimens.sizeSmall,
                     margin: const EdgeInsets.all(Dimens.sizeSmall),
                     child: InkWell(

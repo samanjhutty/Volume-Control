@@ -50,6 +50,7 @@ class StringRes {
   static const String changeTheme = 'Change Theme';
   static const String changeTime = 'Change to 24Hr clock';
   static const String text24hr = 'Use 24hr format';
+  static const String personlize = 'Personalization';
 
   static String toIcons(String icon) => 'assets/icons/$icon.png';
   static const List<String> dayList = [
