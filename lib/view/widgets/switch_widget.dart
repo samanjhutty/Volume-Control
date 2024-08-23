@@ -23,7 +23,7 @@ class MySwitchWidgetState extends State<MySwitchWidget> {
   Widget build(BuildContext context) {
     final scheme = ThemeServices.of(context);
 
-    return Switch.adaptive(
+    return Switch(
       activeColor: scheme.primaryContainer,
       activeTrackColor: scheme.onPrimaryContainer,
       onChanged: (value) {

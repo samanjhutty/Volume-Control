@@ -12,7 +12,7 @@ import '../../model/models/current_system_settings.dart';
 import '../../model/models/scenario_model.dart';
 
 class AddScenarioController extends GetxController {
-  DBcontroller dBcontroller = Get.find();
+  DBcontroller db = Get.find();
 
   TextEditingController titleController = TextEditingController();
   TimeOfDay? startTime;
@@ -63,7 +63,7 @@ class AddScenarioController extends GetxController {
 
   /// load values from list item to edit page
   _onEdit(int index) {
-    ScenarioModel data = dBcontroller.scenarioList[index];
+    ScenarioModel data = db.scenarioList[index];
     startTime = data.startTime.toTimeOfDay;
     endTime = data.endTime.toTimeOfDay;
     repeatDays.value = data.repeat ?? [];
@@ -98,10 +98,10 @@ class AddScenarioController extends GetxController {
   }
 
   void deleteScenario() async {
-    dBcontroller.scenarioList.removeAt(updateList!);
+    db.scenarioList.removeAt(updateList!);
     Get.back();
 
-    dBcontroller.saveList(dBcontroller.scenarioList);
+    db.saveList(db.scenarioList);
     await AndroidAlarmManager.cancel(updateList! + 1);
   }
 
@@ -143,13 +143,13 @@ class AddScenarioController extends GetxController {
         volumeMode: currentVolMode.name,
         title: titleController.text.isEmpty ? null : titleController.text);
 
-    await dBcontroller.saveSystemSettings(data, index: index);
+    await db.saveSystemSettings(data, index: index);
   }
 
   /// Adds a new Scenario To scenarioList.
   addScenario() async {
     if (startTime == null || endTime == null) return;
-    int tag = updateList ?? dBcontroller.scenarioList.length;
+    int tag = updateList ?? db.scenarioList.length;
     ScenarioModel data = ScenarioModel(
         title: titleController.text.isEmpty ? null : titleController.text,
         startTime: startTime!.formatTime24H,
@@ -161,13 +161,14 @@ class AddScenarioController extends GetxController {
         isON: repeatDays.isEmpty ? false : true);
 
     if (updateList != null) {
-      dBcontroller.scenarioList[updateList!] = data;
+      db.scenarioList[updateList!] = data;
     } else {
-      dBcontroller.scenarioList.add(data);
+      db.scenarioList.add(data);
     }
+    db.scenarioList.sort((a, b) => a.startTime.compareTo(b.startTime));
 
     /// write to storage
-    await dBcontroller.saveList(dBcontroller.scenarioList);
+    await db.saveList(db.scenarioList);
 
     /// save current settings
     await _saveCurrentSettings(index: tag);
