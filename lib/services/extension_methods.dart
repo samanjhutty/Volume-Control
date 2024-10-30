@@ -45,7 +45,7 @@ extension MyDateTime on DateTime {
 
 extension MyTimeOfDay on TimeOfDay {
   /// returns TimeOfDay to String in 24hr format.
-  String get formatTime24H => _formatTime24H(this);
+  String get format24H => _formatTime24H(this);
   DateTime get toDateTime => _toDateTime(this);
 
   String _formatTime24H(TimeOfDay time) {
@@ -62,7 +62,7 @@ extension MyTimeOfDay on TimeOfDay {
 }
 
 extension MyString on String {
-  /// converts TimeOfDay string to DateTime object
+  /// converts string to TimeOfDay object
   TimeOfDay get toTimeOfDay => _timeofDayFromString(this);
   DateTime get toDateTime => _toDateTime(this);
 

@@ -1,6 +1,5 @@
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -25,9 +24,9 @@ Future initServices() async {
     await Get.putAsync(() => AuthServices().init());
     await AndroidAlarmManager.initialize();
     await NotificationServices.init();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   } catch (e) {
-    logPrint('init services: $e');
+    logPrint('init error: $e');
   }
 }
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sound_mode/utils/ringer_mode_statuses.dart';
+import 'package:volume_control/model/models/scenario_model.dart';
 import 'package:volume_control/model/util/color_resources.dart';
+import 'package:volume_control/services/auth_services.dart';
 import 'package:volume_control/view/widgets/my_checkbox.dart';
 import 'package:volume_control/view/widgets/time_picker.dart';
 import 'package:volume_control/view_model/controllers/add_scenario_controller.dart';
@@ -19,6 +21,7 @@ class AddScenario extends GetView<AddScenarioController> {
     Size size = MediaQuery.sizeOf(context);
     var device = MediaQuery.orientationOf(context);
     var db = Get.find<DBcontroller>();
+    var services = Get.find<AuthServices>();
 
     return Scaffold(
       body: CustomScrollView(
@@ -65,6 +68,7 @@ class AddScenario extends GetView<AddScenarioController> {
                           ),
                           const SizedBox(height: Dimens.sizeSmall),
                           MyTimePicker(
+                            use24HrFormat: services.is24hrFormat.value,
                             color: scheme.textColor,
                             initalTime: controller.startTime ??
                                 TimeOfDay.fromDateTime(DateTime.now()),
@@ -86,6 +90,7 @@ class AddScenario extends GetView<AddScenarioController> {
                           ),
                           const SizedBox(height: Dimens.sizeSmall),
                           MyTimePicker(
+                            use24HrFormat: services.is24hrFormat.value,
                             color: scheme.textColor,
                             initalTime: controller.endTime ??
                                 TimeOfDay.fromDateTime(DateTime.now()
@@ -136,41 +141,14 @@ class AddScenario extends GetView<AddScenarioController> {
                                 )),
                           ),
                           const SizedBox(height: Dimens.sizeSmall),
-                          Center(
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Obx(
-                                () => ToggleButtons(
-                                    fillColor: scheme.primaryContainer,
-                                    selectedColor: scheme.onPrimaryContainer,
-                                    color: scheme.textColor,
-                                    renderBorder: false,
-                                    borderRadius: BorderRadius.circular(
-                                        Dimens.borderRadiusDefault),
-                                    onPressed: (index) {
-                                      controller.daySelected[index] =
-                                          !controller.daySelected[index];
-                                      if (controller.daySelected[index]) {
-                                        controller.dayList[index].selected =
-                                            true;
-                                      } else {
-                                        controller.dayList[index].selected =
-                                            false;
-                                      }
-                                      controller.repeatDays.value =
-                                          controller.daysRepeat();
-                                    },
-                                    isSelected: controller.daySelected,
-                                    children: controller.days),
-                              ),
-                            ),
-                          )
+                          const MyToggleButton()
                         ],
                       ),
                       const SizedBox(height: Dimens.sizeMedium),
                       TextFormField(
                         controller: controller.titleController,
                         cursorColor: scheme.primaryContainer,
+                        style: TextStyle(color: scheme.textColor),
                         decoration: InputDecoration(
                             floatingLabelStyle:
                                 TextStyle(color: scheme.onPrimaryContainer),
@@ -318,5 +296,54 @@ class AddScenario extends GetView<AddScenarioController> {
         ),
       ),
     );
+  }
+}
+
+class MyToggleButton extends StatefulWidget {
+  const MyToggleButton({super.key});
+
+  @override
+  State<MyToggleButton> createState() => _MyToggleButtonState();
+}
+
+class _MyToggleButtonState extends State<MyToggleButton> {
+  var controller = Get.find<AddScenarioController>();
+
+  bool isSelected(ScenarioDay element) {
+    int index = controller.dayList.indexWhere((e) => e.day == element.day);
+
+    return controller.dayList[index].selected;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var scheme = ThemeServices.of(context);
+
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: controller.dayList
+            .map((element) => IconButton(
+                style: IconButton.styleFrom(
+                    backgroundColor:
+                        isSelected(element) ? scheme.primaryContainer : null,
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(Dimens.sizeSmall + 4),
+                    splashFactory: NoSplash.splashFactory),
+                onPressed: () {
+                  controller.dayList
+                      .firstWhere((e) => e.day == element.day)
+                      .selected = !isSelected(element);
+                  setState(() {});
+
+                  controller.repeatDays.value = controller.daysRepeat();
+                },
+                icon: Text(
+                  element.day,
+                  style: TextStyle(
+                      color: isSelected(element)
+                          ? scheme.onPrimaryContainer
+                          : scheme.textColor),
+                )))
+            .toList());
   }
 }

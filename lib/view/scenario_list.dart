@@ -16,8 +16,7 @@ class ScenarioList extends GetView<DBcontroller> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = ThemeServices.of(context);
-    AuthServices services = Get.find();
+    var scheme = ThemeServices.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,33 +70,13 @@ class ScenarioList extends GetView<DBcontroller> {
                                       fontWeight: FontWeight.w500),
                                 ),
                                 const SizedBox(height: Dimens.sizeSmall),
-                                DefaultTextStyle(
-                                  style: TextStyle(
-                                      color: textColor,
-                                      fontSize: Dimens.fontExtraLarge,
-                                      fontWeight: FontWeight.bold),
-                                  child: Obx(
-                                    () => Row(
-                                      children: [
-                                        Text(
-                                          services.is24hrFormat.value
-                                              ? data.startTime.toTimeOfDay
-                                                  .formatTime24H
-                                              : data.startTime.toTimeOfDay
-                                                  .format(context),
-                                        ),
-                                        const Text(' - '),
-                                        Text(
-                                          services.is24hrFormat.value
-                                              ? data.endTime.toTimeOfDay
-                                                  .formatTime24H
-                                              : data.endTime.toTimeOfDay
-                                                  .format(context),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                FormatTime(
+                                    style: TextStyle(
+                                        color: textColor,
+                                        fontSize: Dimens.fontExtraLarge,
+                                        fontWeight: FontWeight.bold),
+                                    startTime: data.startTime.toTimeOfDay,
+                                    endTime: data.endTime.toTimeOfDay),
                                 if (data.title != null)
                                   Padding(
                                     padding: const EdgeInsets.only(
@@ -130,7 +109,7 @@ class ScenarioList extends GetView<DBcontroller> {
                                         .saveList(controller.scenarioList);
                                     if (value) {
                                       createScenario(
-                                          tag: index + 1,
+                                          tag: index,
                                           startTime: data.startTime.toDateTime,
                                           endTime: data.endTime.toDateTime);
                                       return;
@@ -150,5 +129,65 @@ class ScenarioList extends GetView<DBcontroller> {
         ),
       ],
     );
+  }
+}
+
+class FormatTime extends StatelessWidget {
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
+  final TextStyle? style;
+  const FormatTime(
+      {super.key, required this.startTime, required this.endTime, this.style});
+
+  @override
+  Widget build(BuildContext context) {
+    AuthServices services = Get.find();
+
+    return Obx(() {
+      bool value = services.is24hrFormat.value;
+
+      if (value) {
+        return Row(
+          children: [
+            Text(startTime.format24H, style: style),
+            const SizedBox(width: Dimens.sizeExtraSmall),
+            Text(' - ', style: style),
+            const SizedBox(width: Dimens.sizeExtraSmall),
+            Text(endTime.format24H, style: style),
+          ],
+        );
+      }
+
+      String start = _removePeriod(startTime.format(context));
+      String end = _removePeriod(endTime.format(context));
+
+      return Row(
+        children: [
+          RichText(
+              text: TextSpan(children: [
+            TextSpan(text: start, style: style),
+            const WidgetSpan(child: SizedBox(width: Dimens.sizeExtraSmall)),
+            TextSpan(
+                text: startTime.period.name.toUpperCase(),
+                style: style?.copyWith(fontSize: (style?.fontSize ?? 0) * 0.8)),
+          ])),
+          const SizedBox(width: Dimens.sizeExtraSmall),
+          Text(' - ', style: style),
+          const SizedBox(width: Dimens.sizeExtraSmall),
+          RichText(
+              text: TextSpan(children: [
+            TextSpan(text: end, style: style),
+            const WidgetSpan(child: SizedBox(width: Dimens.sizeExtraSmall)),
+            TextSpan(
+                text: endTime.period.name.toUpperCase(),
+                style: style?.copyWith(fontSize: (style?.fontSize ?? 0) * 0.8)),
+          ])),
+        ],
+      );
+    });
+  }
+
+  String _removePeriod(String time) {
+    return time.replaceAll(RegExp(r'\b(?:AM|PM)\b'), '')..removeAllWhitespace;
   }
 }

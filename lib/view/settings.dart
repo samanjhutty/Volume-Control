@@ -90,6 +90,9 @@ class _SelectThemeState extends State<SelectTheme> {
                             value: e,
                             onChanged: (value) {
                               ThemeServices.of(context).changeTheme(value);
+                              Future.delayed(const Duration(milliseconds: 500))
+                                  // ignore: use_build_context_synchronously
+                                  .then((value) => Navigator.pop(context));
                             },
                           ))
                       .toList()));

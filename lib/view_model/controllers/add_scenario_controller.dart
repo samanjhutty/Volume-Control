@@ -17,15 +17,13 @@ class AddScenarioController extends GetxController {
   TextEditingController titleController = TextEditingController();
   TimeOfDay? startTime;
   TimeOfDay? endTime;
-  RxList<bool> daySelected = <bool>[].obs;
-  RxList<Widget> days = <Widget>[].obs;
   RxList<String> repeatDays = <String>[].obs;
   RxString volumeMode = ''.obs;
   RxDouble volume = RxDouble(0);
   int? updateList;
   RxBool changeVolume = false.obs;
 
-  RxList<ScenarioDay> dayList = List.generate(
+  List<ScenarioDay> dayList = List.generate(
       StringRes.dayList.length,
       (index) => ScenarioDay(
             day: StringRes.dayList[index],
@@ -34,8 +32,6 @@ class AddScenarioController extends GetxController {
 
   @override
   void onInit() {
-    days.value = List.generate(7, (index) => Text(dayList[index].day));
-    daySelected.value = daysIsSelected();
     if (Get.arguments != null) {
       updateList = Get.arguments;
       _onEdit(updateList!);
@@ -80,7 +76,6 @@ class AddScenarioController extends GetxController {
       int index = listOfDays().indexWhere((element) => element == rep);
       dayList.elementAt(index).selected = true;
     }
-    daySelected.value = daysIsSelected();
   }
 
   /// Returns a DateTime picker Widget.
@@ -102,7 +97,7 @@ class AddScenarioController extends GetxController {
     Get.back();
 
     db.saveList(db.scenarioList);
-    await AndroidAlarmManager.cancel(updateList! + 1);
+    await AndroidAlarmManager.cancel(updateList!);
   }
 
   /// Returns the days where selected is true.
@@ -114,23 +109,12 @@ class AddScenarioController extends GetxController {
     return list;
   }
 
-  /// Returns the selected type of each day to List.
-  List<bool> daysIsSelected() {
-    List<bool> list = [];
-    for (var day in dayList) {
-      list.add(day.selected);
-    }
-    logPrint('list day isSelected $list');
-    return list;
-  }
-
   /// Returns the selected value of each day to List.
   List<String> listOfDays() {
     List<String> list = [];
     for (var day in dayList) {
       list.add(day.day);
     }
-    logPrint('list day: $list');
     return list;
   }
 
@@ -152,8 +136,8 @@ class AddScenarioController extends GetxController {
     int tag = updateList ?? db.scenarioList.length;
     ScenarioModel data = ScenarioModel(
         title: titleController.text.isEmpty ? null : titleController.text,
-        startTime: startTime!.formatTime24H,
-        endTime: endTime!.formatTime24H,
+        startTime: startTime!.format24H,
+        endTime: endTime!.format24H,
         repeat: repeatDays,
         changeVol: changeVolume.value,
         volumeMode: volumeMode.value,
@@ -176,7 +160,7 @@ class AddScenarioController extends GetxController {
     /// schedule task
     if (repeatDays.isNotEmpty) {
       createScenario(
-        tag: tag + 1,
+        tag: tag,
         startTime: startTime!.toDateTime,
         endTime: endTime!.toDateTime,
       );

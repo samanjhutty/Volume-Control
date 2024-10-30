@@ -66,7 +66,7 @@ Future<void> createScenario(
     startAt = now.add(const Duration(seconds: 10));
   }
   logPrint(
-      '(AlarmManager):: createScenario:: tag: $tag, startAt: $startAt, startDate: ${startTime.toString()}, ranAt:${DateTime.now()}');
+      'AlarmManager cs:: ${tag + 1}, startAt: $startAt, startDate: $startTime, ranAt:${DateTime.now()}');
   AndroidAlarmManager.periodic(
     const Duration(days: 1),
     tag + 1,
@@ -77,7 +77,7 @@ Future<void> createScenario(
     allowWhileIdle: true,
     rescheduleOnReboot: true,
     params: {
-      'index': tag - 1,
+      'index': tag,
       'start_time': startTime.toString(),
       'end_time': endTime.toString(),
     },
@@ -87,7 +87,7 @@ Future<void> createScenario(
 @pragma('vm:entry-point')
 Future<void> bgSchedular(int tag, Map<String, dynamic> params) async {
   /// in case tag is 0, will create same id for both tasks,
-  /// i.e. startSchedule id: 0,endSchedule id: 00
+  /// i.e. startSchedule id: 0, endSchedule id: 00
   int id = int.parse('$tag$tag');
 
   // get data from function params.
@@ -112,7 +112,7 @@ Future<void> bgSchedular(int tag, Map<String, dynamic> params) async {
   String today = StringRes.dayList[dayofWeek - 1];
 
   logPrint(
-      '(AlarmManager):: bgSchedular:: id: $id, tag: $tag, today: $today, startDate: ${startTime.toString()}, ranAt:${DateTime.now()}');
+      'AlarmManager bg:: id: $id, tag: $tag, today: $today, startDate: ${startTime.toString()}, ranAt:${DateTime.now()}');
   if (scenarioModel.repeat?.contains(today) ?? false) {
     // schedule scenario
     AndroidAlarmManager.oneShotAt(startTime, id, startSchedule,

@@ -11,6 +11,7 @@ class MyTimePicker extends StatefulWidget {
   final Color? color;
   final double? unselectedItemOpacity;
   final TimeOfDay initalTime;
+  final bool use24HrFormat;
   final Function(TimeOfDay time) onChanged;
 
   const MyTimePicker({
@@ -22,6 +23,7 @@ class MyTimePicker extends StatefulWidget {
     this.extentFactor,
     this.heightFactor,
     this.visibleChildren,
+    required this.use24HrFormat,
     required this.initalTime,
     required this.onChanged,
     this.height,
@@ -37,11 +39,12 @@ class MyTimePicker extends StatefulWidget {
 class _MyTimePickerState extends State<MyTimePicker> {
   FixedExtentScrollController hourController = FixedExtentScrollController();
   FixedExtentScrollController minController = FixedExtentScrollController();
+  FixedExtentScrollController formatController = FixedExtentScrollController();
   late int itemExtent;
   late int visibleChildren;
   late double unselecOpacity;
   late TextStyle textStyle;
-  double fontSize = Dimens.fontSuperLarge;
+  double fontSize = Dimens.fontSuperLarge - 4;
 
   @override
   void initState() {
@@ -59,7 +62,7 @@ class _MyTimePickerState extends State<MyTimePicker> {
 
     // calclaions based on values provided
     _itemExtent = itemExtent * (textStyle.fontSize ?? fontSize) * _extentFactor;
-    _itemWidth = (textStyle.fontSize ?? fontSize) * 2;
+    _itemWidth = (textStyle.fontSize ?? fontSize) * 1.8;
     _widgetHeight = itemExtent *
         (textStyle.fontSize ?? fontSize) *
         visibleChildren *
@@ -82,6 +85,9 @@ class _MyTimePickerState extends State<MyTimePicker> {
 
     minController.animateToItem(widget.initalTime.minute,
         duration: duration, curve: Curves.easeOut);
+
+    formatController.animateToItem(widget.initalTime.period.index,
+        duration: duration, curve: Curves.easeOut);
   }
 
   @override
@@ -95,13 +101,15 @@ class _MyTimePickerState extends State<MyTimePicker> {
             width: _itemWidth,
             child: ListWheelScrollView.useDelegate(
               itemExtent: _itemExtent,
-              magnification: 1.2,
               controller: hourController,
+              magnification: 1.2,
               physics: const FixedExtentScrollPhysics(),
               overAndUnderCenterOpacity: unselecOpacity,
               childDelegate: ListWheelChildLoopingListDelegate(
                   children: List.generate(24, (index) {
-                return Text(_format(index), style: textStyle);
+                int hour =
+                    !widget.use24HrFormat && index > 12 ? index - 12 : index;
+                return Text(_format(hour), style: textStyle);
               })),
               onSelectedItemChanged: (value) {
                 widget.onChanged(TimeOfDay(
@@ -130,6 +138,25 @@ class _MyTimePickerState extends State<MyTimePicker> {
               },
             ),
           ),
+          if (!widget.use24HrFormat)
+            Container(
+              margin: const EdgeInsets.only(top: Dimens.sizeDefault),
+              width: _itemWidth * 0.7,
+              child: ListWheelScrollView(
+                  controller: formatController,
+                  itemExtent: _itemExtent / 1.2,
+                  magnification: 1.2,
+                  physics: const FixedExtentScrollPhysics(),
+                  overAndUnderCenterOpacity: unselecOpacity,
+                  children: [
+                    Text('AM',
+                        style: textStyle.copyWith(
+                            fontSize: (textStyle.fontSize ?? fontSize) / 1.7)),
+                    Text('PM',
+                        style: textStyle.copyWith(
+                            fontSize: (textStyle.fontSize ?? fontSize) / 1.7)),
+                  ]),
+            )
         ],
       ),
     );
