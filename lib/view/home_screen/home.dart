@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:volume_control/services/theme_services.dart';
 import 'package:volume_control/view_model/controllers/dbcontroller.dart';
-import '../model/util/dimens.dart';
-import '../model/util/string_resources.dart';
-import '../view_model/routes/app_routes.dart';
+import '../../model/util/dimens.dart';
+import '../../model/util/string_resources.dart';
+import '../../view_model/routes/app_routes.dart';
 import 'scenario_list.dart';
 
 class HomePage extends GetView<DBcontroller> {

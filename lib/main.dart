@@ -1,7 +1,7 @@
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:volume_control/services/auth_services.dart';
 import 'package:volume_control/services/theme_services.dart';
@@ -19,8 +19,7 @@ void main() async {
 Future initServices() async {
   logPrint('init services started...');
   try {
-    await Hive.initFlutter();
-    await Hive.openBox(StringRes.boxName);
+    await GetStorage.init(StringRes.boxName);
     await Get.putAsync(() => AuthServices().init());
     await AndroidAlarmManager.initialize();
     await NotificationServices.init();

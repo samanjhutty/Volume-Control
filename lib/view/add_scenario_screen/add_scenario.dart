@@ -9,8 +9,8 @@ import 'package:volume_control/view/widgets/time_picker.dart';
 import 'package:volume_control/view_model/controllers/add_scenario_controller.dart';
 import 'package:volume_control/view_model/controllers/dbcontroller.dart';
 import 'package:volume_control/model/util/string_resources.dart';
-import '../model/util/dimens.dart';
-import '../services/theme_services.dart';
+import '../../model/util/dimens.dart';
+import '../../services/theme_services.dart';
 
 class AddScenario extends GetView<AddScenarioController> {
   const AddScenario({super.key});

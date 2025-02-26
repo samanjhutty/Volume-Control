@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
-import 'package:volume_control/view/home.dart';
+import 'package:volume_control/view/home_screen/home.dart';
 import 'package:volume_control/view_model/bindings.dart';
 import 'package:volume_control/view_model/routes/app_routes.dart';
-import 'package:volume_control/view/add_scenario.dart';
-import '../../view/settings.dart';
+import 'package:volume_control/view/add_scenario_screen/add_scenario.dart';
+import '../../view/home_screen/settings.dart';
 
 class AppPages {
   static String get initial => AppRoutes.home;

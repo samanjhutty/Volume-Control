@@ -8,24 +8,24 @@ import '../model/util/string_resources.dart';
 
 extension BoxServices on DBcontroller {
   void saveTimeFormat({required bool? use24Hr}) {
-    box.put(StringRes.is24hr, use24Hr ?? false);
+    box.write(StringRes.is24hr, use24Hr ?? false);
   }
 
   /// save the list of model to json format in box.
   Future<void> saveList(List<ScenarioModel> list) async {
-    await box.put(StringRes.scenarioList,
+    await box.write(StringRes.scenarioList,
         list.map((e) => jsonEncode(e.toJson())).toList());
   }
 
   /// save current system volume to box.
   Future<void> saveSystemSettings(CurrentSystemSettings data,
       {required int index}) async {
-    await box.put(StringRes.systemSettings(index), jsonEncode(data.toJson()));
+    await box.write(StringRes.systemSettings(index), jsonEncode(data.toJson()));
   }
 
   /// load the box list to model list.
   List<ScenarioModel> getBoxList() {
-    List list = box.get(StringRes.scenarioList, defaultValue: []);
+    List list = box.read(StringRes.scenarioList) ?? [];
     return List<ScenarioModel>.from(
         list.map((json) => ScenarioModel.fromJson(jsonDecode(json))));
   }

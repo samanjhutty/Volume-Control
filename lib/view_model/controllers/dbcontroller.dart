@@ -1,21 +1,22 @@
 import 'dart:convert';
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'package:get/get.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sound_mode/sound_mode.dart';
 import 'package:sound_mode/utils/ringer_mode_statuses.dart';
 import 'package:volume_control/model/models/scenario_model.dart';
+import 'package:volume_control/services/auth_services.dart';
 import 'package:volume_control/services/extension_methods.dart';
+import 'package:flutter_volume_controller/flutter_volume_controller.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:volume_control/services/notification_services.dart';
 import '../../model/models/current_system_settings.dart';
 import '../../model/util/string_resources.dart';
 
 class DBcontroller extends GetxController with GetTickerProviderStateMixin {
   RxList<ScenarioModel> scenarioList = RxList();
-  Box box = Hive.box(StringRes.boxName);
+  final box = Get.find<AuthServices>().box;
 
   late TabController timeFormatController;
   RxBool darkTheme = Get.isDarkMode.obs;
@@ -96,16 +97,16 @@ Future<void> bgSchedular(int tag, Map<String, dynamic> params) async {
   DateTime endTime = DateTime.parse(params['end_time']);
 
   // init Hive to load and read box contents.
-  await Hive.initFlutter();
-  var box = await Hive.openBox(StringRes.boxName);
+  await GetStorage.init(StringRes.boxName);
+  final box = GetStorage(StringRes.boxName);
 
   // fetch scenario list.
-  List scenarioList = box.get(StringRes.scenarioList);
+  List scenarioList = box.read(StringRes.scenarioList);
   List<ScenarioModel>? modelList = List<ScenarioModel>.from(
       scenarioList.map((json) => ScenarioModel.fromJson(jsonDecode(json))));
   var scenarioModel = modelList.elementAt(index);
   // fetch volume settings.
-  String? systemSettings = box.get(StringRes.systemSettings(index));
+  String? systemSettings = box.read(StringRes.systemSettings(index));
 
   // get current day
   int dayofWeek = DateTime.now().weekday;

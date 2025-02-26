@@ -9,7 +9,7 @@ import 'package:volume_control/view_model/controllers/dbcontroller.dart';
 import 'package:volume_control/model/models/scenario_model.dart';
 import 'package:volume_control/model/util/string_resources.dart';
 import 'package:volume_control/view_model/routes/app_routes.dart';
-import '../model/util/dimens.dart';
+import '../../model/util/dimens.dart';
 
 class ScenarioList extends GetView<DBcontroller> {
   const ScenarioList({super.key});
